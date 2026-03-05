@@ -1,2 +1,2 @@
-# TFG-Equivalencias-Farmac-uticas
-Repositorio utilizado para mi TFG
+# Trabajo de Fin de Grado: Aplicación de equivalencias farmacéuticas internacional
+_*README por desarrollar :P_
