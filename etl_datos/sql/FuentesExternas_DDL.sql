@@ -1,5 +1,5 @@
 
--- Tabla para almacenar las medicinas de CIMA Rest API para España
+-- Tabla para almacenar los medicamentos de CIMA Rest API para España
 CREATE TABLE spain_med(
     nregistro               TEXT,
     atc                     TEXT,
@@ -13,4 +13,16 @@ CREATE TABLE spain_med(
     cpresc                  TEXT,
 
     PRIMARY KEY (nregistro)
+);
+
+-- Tabla para almacenar los medicamentos deL ISPCh para Chile
+CREATE TABLE chile_med (
+    registro TEXT,
+    nombre_comercial TEXT,
+    fecha_registro TEXT,
+    empresa TEXT,
+    principio_activo TEXT,
+    control_legal TEXT,
+
+    PRIMARY KEY (registro)
 );

@@ -1,0 +1,68 @@
+import pandas as pd
+import psycopg2
+from psycopg2.extras import execute_values
+
+# Configuración DB
+DB_CONFIG = {
+    "dbname": "tfg_fuentes",
+    "user": "donakyoin",    
+    "password": "purple",
+    "host": "localhost",
+    "port": "5432"
+}
+
+# Directorio archivo .csv
+ARCHIVO_CSV = '../data/Productos_RECETA_SIMPLE.csv'
+
+def cargar_datos_chilemed():
+    print(f"Leyendo el archivo CSV con pandas...")
+    try:
+        # Lectura del .csv
+        df = pd.read_csv(ARCHIVO_CSV, sep=',', dtype=str)
+        
+        # Limpieza de valores nulos
+        df = df.where(pd.notnull(df), None)
+        
+        # Mapeo de datos del csv a la tabla chile_med
+        df_chile = pd.DataFrame()
+        df_chile['registro'] = df['Registro']                  
+        df_chile['nombre_comercial'] = df['Nombre']
+        df_chile['fecha_registro'] = df['Fecha Registro']
+        df_chile['empresa'] = df['Empresa']                  
+        df_chile['principio_activo'] = df['Principio Activo']
+        df_chile['control_legal'] = df['Control Legal']
+
+        # Convertir el DataFrame a una lista de tuplas
+        registros_tuplas = [tuple(x) for x in df_chile.to_numpy()]
+
+        print(f"CSV leído correctamente. Se encontraron {len(registros_tuplas)} medicamentos.")
+
+        # Conexión a Postgres
+        conexion = psycopg2.connect(**DB_CONFIG)
+        cursor = conexion.cursor()
+
+        # Inserción de datos
+        insert_chilemed = """
+            INSERT INTO chile_med
+            (registro, nombre_comercial, fecha_registro, empresa, principio_activo, control_legal)
+            VALUES %s
+            ON CONFLICT (registro) DO NOTHING;
+        """
+        execute_values(cursor, insert_chilemed, registros_tuplas)
+        conexion.commit()
+        
+        print(f"\nCarga completada con éxito.")
+
+    except KeyError as e:
+        print(f"Error: No se encontró la columna {e} en tu CSV.")
+    except Exception as e:
+        print(f"Ocurrió un error inesperado: {e}")
+    finally:
+        # Cerrar conexión
+        if 'conexion' in locals() and conexion:
+            cursor.close()
+            conexion.close()
+            print("Conexión cerrada.")
+
+if __name__ == "__main__":
+    cargar_datos_chilemed()
