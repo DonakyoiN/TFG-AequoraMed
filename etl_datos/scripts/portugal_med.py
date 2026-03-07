@@ -15,24 +15,25 @@ DB_CONFIG = {
 ARCHIVO_CSV = '../data/lista_infomed.csv'
 
 def cargar_datos_portugalmed():
-    print(f"Leyendo el archivo CSV con pandas...")
+    
+    print("Leyendo el archivo CSV con pandas...")
 
     try:
         # Lectura del .csv
         df = pd.read_csv(ARCHIVO_CSV, sep=',', dtype=str)
 
-        # Limpieza de valores nulos
-        df = df.where(pd.notnull(df), None)
-
         # Mapeo de datos del csv a la tabla portugal_med
         df_pt = pd.DataFrame()
-        df_pt['active_substance'] = df["Active Substance/INN"]
-        df_pt['product_name'] = df["Medicinal Product’s Name"]
-        df_pt['dose_form'] = df["Pharmaceutical Dose Form"]
-        df_pt['strength'] = df["Strength"]
-        df_pt['ma_holder'] = df["MA Holder"]
-        df_pt['ma_status'] = df["MA Status"]
-        df_pt['marketing'] = df["Marketing"]
+        df_pt['active_substance'] = df.get('Active Substance/INN', 'N/A')     
+        df_pt['product_name'] = df.get('Medicinal Product’s Name', 'N/A')  
+        df_pt['dose_form'] = df.get('Pharmaceutical Dose Form', 'N/A')  
+        df_pt['strength'] = df.get('Strength', 'N/A')  
+        df_pt['ma_holder'] = df.get('MA Holder', 'N/A')  
+        df_pt['ma_status'] = df.get('MA Status', 'N/A')  
+        df_pt['marketing'] = df.get('Marketing', 'N/A') 
+
+        # Limpieza de valores nulos
+        df_pt = df_pt.fillna('N/A')
 
         # Convertir el DataFrame a una lista de tuplas
         registros_tuplas = [tuple(x) for x in df_pt.to_numpy()]
@@ -43,6 +44,9 @@ def cargar_datos_portugalmed():
         conexion = psycopg2.connect(**DB_CONFIG)
         cursor = conexion.cursor()
 
+        # Limpiar la tabla antes de la carga para no duplicar datos (Portugal no tiene un dato de registro)
+        cursor.execute("TRUNCATE TABLE portugal_med RESTART IDENTITY;")
+        
         # Inserción de datos
         insert_portugalmed = """
             INSERT INTO portugal_med
@@ -53,18 +57,22 @@ def cargar_datos_portugalmed():
         execute_values(cursor, insert_portugalmed, registros_tuplas)
         conexion.commit()
 
-        print(f"\nCarga completada con éxito.")
+        print("\nCarga completada con éxito.")
 
     except KeyError as e:
         print(f"Error: No se encontró la columna {e} en tu CSV.")
     except Exception as e:
-        print(f"Ocurrió un error inesperado: {e}")
+        print(f"Error de conexión: {e}")
+
+        if 'conexion' in locals():
+            conexion.rollback()
     finally:
         # Cerrar conexión
-        if 'conexion' in locals() and conexion:
+        if 'cursor' in locals():
             cursor.close()
+        if 'conexion' in locals():
             conexion.close()
-            print("Conexión cerrada.")
+            print("Conexión a base de datos cerrada.")
 
 if __name__ == "__main__":
     cargar_datos_portugalmed()
