@@ -35,6 +35,9 @@ def cargar_datos_portugalmed():
         # Limpieza de valores nulos
         df_pt = df_pt.fillna('N/A')
 
+        # Principio Activo en Mayusculas por Estándar con los otros datos
+        df_pt['active_substance'] = df_pt['active_substance'].astype(str).str.upper()
+
         # Convertir el DataFrame a una lista de tuplas
         registros_tuplas = [tuple(x) for x in df_pt.to_numpy()]
 
