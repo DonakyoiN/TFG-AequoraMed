@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 import requests
 import pandas as pd
 import psycopg2
@@ -5,12 +7,13 @@ from psycopg2.extras import execute_values
 import time
 
 # Configuración DB
+load_dotenv()
 DB_CONFIG = {
-    "dbname": "tfg_fuentes",
-    "user": "donakyoin",
-    "password": "purple",
-    "host": "localhost",
-    "port": "5432"
+    "dbname": os.getenv("DB_NAME"),
+    "user": os.getenv("DB_USER"),    
+    "password": os.getenv("DB_PASS"),
+    "host": os.getenv("DB_HOST"),
+    "port": os.getenv("DB_PORT")
 }
 
 def cargar_datos_fda():
