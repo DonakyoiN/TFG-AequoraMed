@@ -33,7 +33,22 @@ def procesar_medicamento(med):
     labtitular = med.get("labtitular") # Laboratorio titular del medicamento, Tipo Texto
     cpresc = med.get("cpresc", "SIN RECETA") # Condiciones de prescripción del medicamento, Tipo Texto
     dosis = med.get("dosis", "") # Dosis del o los principios activos, Tipos Texto
-    estado = med.get("estado", {}).get("nombre", "") # Estado de registro del medicamento, Tipo estado
+    estado_obj = med.get("estado", {}) # Estado de registro del medicamento, Tipo estado
+    
+    # El valor de tipo estado tiene los siguientes valores: rev, susp y aut las cuales son fechas de Renovación/Suspensión/Autorización
+    if estado_obj.get("rev"):
+        estado = "Revocado"
+    elif estado_obj.get("susp"):
+        estado = "Suspendido"
+    elif estado_obj.get("aut"):
+        estado = "Autorizado"
+    else:
+        estado = "Desconocido"
+    
+    # Nos interesa solo aquellos medicamentos autorizados
+    if estado != "Autorizado":
+        return None
+
     forma_farmaceutica = med.get("formaFarmaceutica", {}).get("nombre", "") # Forma farmacéutica, Tipo item
     # Lista de las vías de administración para las que está autorizado el medicamento, Tipo item[]
     vias_lista = [via.get("nombre") for via in med.get("viasAdministracion", []) if via.get("nombre")]
@@ -79,6 +94,8 @@ def carga_datos_spainmed():
         # Conexión a Postgres
         conexion = psycopg2.connect(**DB_CONFIG)
         cursor = conexion.cursor()
+        # Limpieza de datos
+        cursor.execute("TRUNCATE TABLE spain_med;")
     except Exception as e:
         print(f"Error al conectarse con PostgreSQL: {e}")
         return
@@ -119,7 +136,10 @@ def carga_datos_spainmed():
         print(f"\nProcesando página {pagina}")
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=19) as executor:
-            registros_tuplas = list(executor.map(procesar_medicamento, medicamentos_pagina))
+            resultados = list(executor.map(procesar_medicamento, medicamentos_pagina))
+
+        # Solo almacenamos los que estén Autorizados
+        registros_tuplas = [res for res in resultados if res is not None]
 
         # Inserta los detalles del medicamento en la tabla spain_med
         insert_spainmed = """
@@ -130,7 +150,8 @@ def carga_datos_spainmed():
             atc = EXCLUDED.atc,
             principios_activos = EXCLUDED.principios_activos,
             nombre = EXCLUDED.nombre,
-            dosis = EXCLUDED.dosis;
+            dosis = EXCLUDED.dosis,
+            estado = EXCLUDED.estado;
         """
         execute_values(cursor, insert_spainmed, registros_tuplas)
         conexion.commit()
