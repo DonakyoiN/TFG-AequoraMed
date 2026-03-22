@@ -73,7 +73,7 @@ def carga_atc_pa_usamed():
         cursor = conexion.cursor()
         
         # Selección de los ids de rxcui
-        cursor.execute("SELECT DISTINCT rxnorm_id FROM usa_med;")
+        cursor.execute("SELECT DISTINCT rxnorm_id FROM fuentes.usa_med;")
         rxnorm_ids = [fila[0] for fila in cursor.fetchall()]
         
         total = len(rxnorm_ids) # rxcui ids totales 
@@ -88,7 +88,7 @@ def carga_atc_pa_usamed():
                 resultados = list(executor.map(obtener_atc_pa, lote_ids))
                         
             # Sobreescribimos los N/A anteriores por el ATC y el Principio Activo
-            update_query = "UPDATE usa_med SET id_atc = %s, name_ingredient = %s WHERE rxnorm_id = %s;"
+            update_query = "UPDATE fuentes.usa_med SET id_atc = %s, name_ingredient = %s WHERE rxnorm_id = %s;"
             
             # Actualzación de datos
             datos_a_actualizar = []

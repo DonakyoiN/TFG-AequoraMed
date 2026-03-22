@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
+from pathlib import Path
 
 # Configuración DB
 load_dotenv()
@@ -14,35 +15,33 @@ DB_CONFIG = {
     "port": os.getenv("DB_PORT")
 }
 
+# Ruta de archivo
+BASE_DIR = Path(__file__).parent
 # Directorio archivo .csv
-ARCHIVO_CSV = '../data/lista_infomed.csv'
+ARCHIVO_CSV = BASE_DIR/'data'/'Productos_RECETA_SIMPLE.csv'
 
-def cargar_datos_portugalmed():
-    
+def cargar_datos_chilemed():
+
     print("Leyendo el archivo CSV con pandas...")
 
     try:
         # Lectura del .csv
         df = pd.read_csv(ARCHIVO_CSV, sep=',', dtype=str)
-
-        # Mapeo de datos del csv a la tabla portugal_med
-        df_pt = pd.DataFrame()
-        df_pt['active_substance'] = df.get('Active Substance/INN', 'N/A')     
-        df_pt['product_name'] = df.get('Medicinal Product’s Name', 'N/A')  
-        df_pt['dose_form'] = df.get('Pharmaceutical Dose Form', 'N/A')  
-        df_pt['strength'] = df.get('Strength', 'N/A')  
-        df_pt['ma_holder'] = df.get('MA Holder', 'N/A')  
-        df_pt['ma_status'] = df.get('MA Status', 'N/A')  
-        df_pt['marketing'] = df.get('Marketing', 'N/A') 
+        
+        # Mapeo de datos del csv a la tabla chile_med
+        df_chile = pd.DataFrame()
+        df_chile['registro'] = df.get('Registro', 'N/A')                  
+        df_chile['nombre_comercial'] = df.get('Nombre', 'N/A')
+        df_chile['fecha_registro'] = df.get('Fecha Registro', 'N/A')
+        df_chile['empresa'] = df.get('Empresa', 'N/A')                  
+        df_chile['principio_activo'] = df.get('Principio Activo', 'N/A')
+        df_chile['control_legal'] = df.get('Control Legal', 'N/A')
 
         # Limpieza de valores nulos
-        df_pt = df_pt.fillna('N/A')
-
-        # Principio Activo en Mayusculas por Estándar con los otros datos
-        df_pt['active_substance'] = df_pt['active_substance'].astype(str).str.upper()
+        df_chile = df_chile.fillna('N/A')
 
         # Convertir el DataFrame a una lista de tuplas
-        registros_tuplas = [tuple(x) for x in df_pt.to_numpy()]
+        registros_tuplas = [tuple(x) for x in df_chile.to_numpy()]
 
         print(f"CSV leído correctamente. Se encontraron {len(registros_tuplas)} medicamentos.")
 
@@ -50,20 +49,20 @@ def cargar_datos_portugalmed():
         conexion = psycopg2.connect(**DB_CONFIG)
         cursor = conexion.cursor()
 
-        # Limpiar la tabla antes de la carga para no duplicar datos (Portugal no tiene un dato de registro)
-        cursor.execute("TRUNCATE TABLE portugal_med RESTART IDENTITY;")
-        
+        # Limpieza de datos
+        cursor.execute("TRUNCATE TABLE fuentes.chile_med;")
+
         # Inserción de datos
-        insert_portugalmed = """
-            INSERT INTO portugal_med
-            (active_substance, product_name, dose_form, strength, ma_holder, ma_status, marketing)
+        insert_chilemed = """
+            INSERT INTO fuentes.chile_med
+            (registro, nombre_comercial, fecha_registro, empresa, principio_activo, control_legal)
             VALUES %s
+            ON CONFLICT (registro) DO NOTHING;
         """
-
-        execute_values(cursor, insert_portugalmed, registros_tuplas)
+        execute_values(cursor, insert_chilemed, registros_tuplas)
         conexion.commit()
-
-        print("\nCarga completada con éxito.")
+        
+        print(f"\nCarga completada con éxito.")
 
     except KeyError as e:
         print(f"Error: No se encontró la columna {e} en tu CSV.")
@@ -81,4 +80,4 @@ def cargar_datos_portugalmed():
             print("Conexión a base de datos cerrada.")
 
 if __name__ == "__main__":
-    cargar_datos_portugalmed()
+    cargar_datos_chilemed()

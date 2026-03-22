@@ -97,9 +97,12 @@ def cargar_datos_canadamed():
         conexion = psycopg2.connect(**DB_CONFIG)
         cursor = conexion.cursor()
 
+        # Limpieza de datos
+        cursor.execute("TRUNCATE TABLE fuentes.canada_med;")
+
         # Insertar datos
         insert_canadamed = """
-            INSERT INTO canada_med (
+            INSERT INTO fuentes.canada_med (
                 drug_code, din, atc_number, ingredient_name, brand_name,
                 company_name, class_name, strength, strength_unit, route_administration,
                 pharmaceutical_form, status

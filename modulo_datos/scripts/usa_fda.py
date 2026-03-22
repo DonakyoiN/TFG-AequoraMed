@@ -106,10 +106,10 @@ def cargar_datos_fda():
         cursor = conexion.cursor()
 
         # Limpieza de datos
-        cursor.execute("TRUNCATE TABLE usa_med;")
+        cursor.execute("TRUNCATE TABLE fuentes.usa_med;")
 
         insert_usa = """
-            INSERT INTO usa_med (
+            INSERT INTO fuentes.usa_med (
                 rxnorm_id, application_number, id_atc, name_ingredient, brand_name,
                 sponsor_name, stength, route_administration, dosage_form, marketing_status
             ) VALUES %s

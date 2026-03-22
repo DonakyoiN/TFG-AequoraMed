@@ -1,6 +1,10 @@
+/*
+  ||  DDL con la creación de Tablas para la base de datos ||
+*/
 
+-- FUENTES EXTERNAS
 -- Tabla para almacenar los medicamentos de CIMA Rest API para España
-CREATE TABLE spain_med(
+CREATE TABLE fuentes.spain_med(
     nregistro               TEXT,
     atc                     TEXT,
     principios_activos      TEXT,
@@ -16,7 +20,7 @@ CREATE TABLE spain_med(
 );
 
 -- Tabla para almacenar los medicamentos deL ISPCh para Chile
-CREATE TABLE chile_med (
+CREATE TABLE fuentes.chile_med (
     registro                TEXT,
     nombre_comercial        TEXT,
     fecha_registro          TEXT,
@@ -28,7 +32,7 @@ CREATE TABLE chile_med (
 );
 
 -- Tabla para almacenar los medicamentos del Drug Product Database (DPD) para Canadá
-CREATE TABLE canada_med(
+CREATE TABLE fuentes.canada_med(
     drug_code                   TEXT,
     din                         TEXT,
     atc_number                  TEXT,
@@ -46,7 +50,7 @@ CREATE TABLE canada_med(
 );
 
 -- Tabla para almacernar los medicamentos de Estados Unidos: RxNorm + Drugs@FDA
-CREATE TABLE usa_med(
+CREATE TABLE fuentes.usa_med(
     rxnorm_id                   TEXT,
     application_number          TEXT,
     id_atc                      TEXT,
@@ -62,7 +66,7 @@ CREATE TABLE usa_med(
 );
 
 -- Tabla para almacenar los medicamentos del INFAMED para Portugal
-CREATE TABLE portugal_med(
+CREATE TABLE fuentes.portugal_med(
     id_ptmet                SERIAL,
     active_substance        TEXT,
     product_name            TEXT,
@@ -72,5 +76,5 @@ CREATE TABLE portugal_med(
     ma_status               TEXT,
     marketing               TEXT,
 
-    PRIMARY KEY (id_ptmet )
+    PRIMARY KEY (id_ptmet)
 );

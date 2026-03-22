@@ -94,8 +94,9 @@ def carga_datos_spainmed():
         # Conexión a Postgres
         conexion = psycopg2.connect(**DB_CONFIG)
         cursor = conexion.cursor()
+
         # Limpieza de datos
-        cursor.execute("TRUNCATE TABLE spain_med;")
+        cursor.execute("TRUNCATE TABLE fuentes.spain_med;")
     except Exception as e:
         print(f"Error al conectarse con PostgreSQL: {e}")
         return
@@ -143,7 +144,7 @@ def carga_datos_spainmed():
 
         # Inserta los detalles del medicamento en la tabla spain_med
         insert_spainmed = """
-        INSERT INTO spain_med 
+        INSERT INTO fuentes.spain_med 
         (nregistro, atc, principios_activos, nombre, labtitular, dosis, vias_administracion, forma_farmaceutica, estado, cpresc)
         VALUES %s
         ON CONFLICT (nregistro) DO UPDATE SET 
