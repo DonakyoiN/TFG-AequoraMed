@@ -78,3 +78,82 @@ CREATE TABLE fuentes.portugal_med(
 
     PRIMARY KEY (id_ptmet)
 );
+
+
+-- MEDICAMENTOS
+-- Tabla de Paises
+CREATE TABLE med.pais(
+    id_pais         SERIAL,
+    iso_code        TEXT,
+    nom_pais        TEXT,
+
+    PRIMARY KEY (id_pais)
+);
+
+-- Tabla de codigos ATC
+CREATE TABLE med.atc(
+    id_atc          SERIAL,
+    code_atc        TEXT,
+    desc_es         TEXT,
+    desc_en         TEXT,
+
+    PRIMARY KEY (id_atc)
+);
+
+-- Tabla de Principios Activos
+CREATE TABLE med.principio_activo(
+    id_pa           SERIAL,
+    nom_estandar    TEXT,
+    nom_alterno     TEXT,
+
+    PRIMARY KEY (id_pa)
+);
+
+-- Tabla de Formas Farmacéutica
+CREATE TABLE med.forma_farmaceutica(
+    id_forma        SERIAL,
+    descripcion     TEXT,
+
+    PRIMARY KEY (id_forma)
+);
+
+-- Tabla de Vías de Administración
+CREATE TABLE med.via_administracion(
+    id_via          SERIAL,
+    descripcion     TEXT,
+
+    PRIMARY KEY (id_via)
+);
+
+-- Tabla de Medicamentos
+CREATE TABLE med.medicamento(
+    id_med          SERIAL,
+    id_atc          INT,
+    id_pais         INT,
+    reg_pais        TEXT,
+    nom_comercial   TEXT,
+    laboratorio     TEXT,
+    id_forma        INT,
+    id_via          INT,
+
+    PRIMARY KEY (id_med),
+
+    FOREIGN KEY (id_atc) REFERENCES med.atc (id_atc) ON DELETE CASCADE,
+    FOREIGN KEY (id_pais) REFERENCES med.pais (id_pais) ON DELETE CASCADE,
+    FOREIGN KEY (id_forma) REFERENCES med.forma_farmaceutica (id_forma) ON DELETE CASCADE,
+    FOREIGN KEY (id_via) REFERENCES med.via_administracion (id_via) ON DELETE CASCADE     
+);
+
+-- Tabla N:M MEDICAMENTO-PRINCIPIO ACTIVO
+CREATE TABLE med.contiene(
+    id_med          INT,
+    id_pa           INT,
+    dosis_valor     FLOAT,
+    dosis_unit      TEXT,
+
+    PRIMARY KEY (id_med, id_pa),
+
+    FOREIGN KEY (id_med) REFERENCES med.medicamento (id_med) ON DELETE CASCADE,
+    FOREIGN KEY (id_pa) REFERENCES med.principio_activo (id_pa) ON DELETE CASCADE
+);
+
