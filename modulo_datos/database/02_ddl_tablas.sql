@@ -175,4 +175,4 @@ CREATE TABLE med.asociado_con(
 
     FOREIGN KEY (id_atc) REFERENCES med.atc (id_atc) ON DELETE CASCADE,
     FOREIGN KEY (id_pa) REFERENCES med.principio_activo (id_pa) ON DELETE CASCADE
-)
+);
