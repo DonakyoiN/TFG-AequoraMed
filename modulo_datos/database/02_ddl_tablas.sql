@@ -1,3 +1,4 @@
+-- Active: 1774201589902@@127.0.0.1@5432@db_med
 /*
   ||  DDL con la creación de Tablas para la base de datos ||
 */
@@ -104,7 +105,6 @@ CREATE TABLE med.atc(
 CREATE TABLE med.principio_activo(
     id_pa           SERIAL,
     nom_estandar    TEXT,
-    nom_alterno     TEXT,
 
     PRIMARY KEY (id_pa)
 );
@@ -128,7 +128,6 @@ CREATE TABLE med.via_administracion(
 -- Tabla de Medicamentos
 CREATE TABLE med.medicamento(
     id_med          SERIAL,
-    id_atc          INT,
     id_pais         INT,
     reg_pais        TEXT,
     nom_comercial   TEXT,
@@ -138,7 +137,6 @@ CREATE TABLE med.medicamento(
 
     PRIMARY KEY (id_med),
 
-    FOREIGN KEY (id_atc) REFERENCES med.atc (id_atc) ON DELETE CASCADE,
     FOREIGN KEY (id_pais) REFERENCES med.pais (id_pais) ON DELETE CASCADE,
     FOREIGN KEY (id_forma) REFERENCES med.forma_farmaceutica (id_forma) ON DELETE CASCADE,
     FOREIGN KEY (id_via) REFERENCES med.via_administracion (id_via) ON DELETE CASCADE     
@@ -157,3 +155,24 @@ CREATE TABLE med.contiene(
     FOREIGN KEY (id_pa) REFERENCES med.principio_activo (id_pa) ON DELETE CASCADE
 );
 
+-- Tabla N:M MEDICAMENTO-ATC
+CREATE TABLE med.identificado_por(
+    id_med          INT,
+    id_atc          INT,
+
+    PRIMARY KEY (id_med, id_atc),
+
+    FOREIGN KEY (id_med) REFERENCES med.medicamento (id_med) ON DELETE CASCADE,
+    FOREIGN KEY (id_atc) REFERENCES med.atc (id_atc) ON DELETE CASCADE
+);
+
+-- Tabla N:M ATC-PRINCIPIO ACTIVO
+CREATE TABLE med.asociado_con(
+    id_atc          INT,
+    id_pa           INT,
+
+    PRIMARY KEY (id_atc, id_pa),
+
+    FOREIGN KEY (id_atc) REFERENCES med.atc (id_atc) ON DELETE CASCADE,
+    FOREIGN KEY (id_pa) REFERENCES med.principio_activo (id_pa) ON DELETE CASCADE
+);
