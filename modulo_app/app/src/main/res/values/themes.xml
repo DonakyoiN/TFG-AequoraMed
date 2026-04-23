@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Project_Med" parent="Theme.Material3.DayNight.NoActionBar">
 
-        <!-- Colores del Tema -->
+        <!-- Colors -->
         <item name="colorPrimary">@color/light_primary</item>
         <item name="colorOnPrimary">@color/light_on_primary</item>
         <item name="colorPrimaryContainer">@color/light_primary_container</item>
@@ -37,6 +37,11 @@
         <item name="colorSurfaceContainer">@color/light_surface_container</item>
         <item name="colorSurfaceContainerHigh">@color/light_surface_container_high</item>
         <item name="colorSurfaceContainerHighest">@color/light_surface_container_highest</item>
+
+        <!-- Fonts -->
+        <item name="fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+
     </style>
 
     <style name="Theme.Project_Med" parent="Base.Theme.Project_Med" />
