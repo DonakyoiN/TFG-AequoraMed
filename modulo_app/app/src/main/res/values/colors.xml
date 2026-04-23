@@ -7,6 +7,7 @@
     <color name="light_primary">#166B54</color>
     <color name="light_on_primary">#FFFFFF</color>
     <color name="light_primary_container">#A4F2D5</color>
+    <color name="light_on_primary_container">#00513E</color>
     <color name="light_secondary">#4C635A</color>
     <color name="light_on_secondary">#FFFFFF</color>
     <color name="light_secondary_container">#CEE9DC</color>
