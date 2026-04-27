@@ -72,3 +72,18 @@ fastlane/metadata/android/*
 
 # Code coverage
 coverage.ec
+
+# LaTeX
+*.aux
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.out
+*.nav
+*.snm
+*.vrb
+*.bbl
+*.blg
