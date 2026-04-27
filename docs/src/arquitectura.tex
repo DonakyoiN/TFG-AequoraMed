@@ -52,6 +52,37 @@ El nivel de datos se encarga de todo lo relativo al almacenamiento robusto e ín
 
 A continuación, se detalla el diseño de las diferentes piezas de software que componen la solución. Debido a la naturaleza modular de esta aplicación, este diseño se ha dividido en distintos bloques lógicos que abarcan la ingesta de información, la gestión de persistencia y las funcionalidades expuestas hacia la capa de presentación. 
 
+\subsection{Base de Datos}
+
+El diseño de la base de datos es un pilar fundamental en el desarrollo de la aplicación, ya que garantiza la integridad, estructuración y el acceso eficiente a la información médica internacional. Atendiendo al diseño conceptual, se ha elaborado un Modelo Entidad-Relación (MER) que plasma las entidades involucradas y cómo se interrelacionan, tal como se aprecia en la Figura \ref{fig:diagrama_mer}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{assets/Diagrama_MER.png}
+    \caption{Diagrama Entidad-Relación (MER) del dominio de datos}
+    \label{fig:diagrama_mer}
+\end{figure}
+
+El esquema de persistencia (cuya estructura de definición de datos se encuentra plasmada en los \textit{scripts} SQL del directorio \texttt{modulo\_datos/database/}) se divide lógicamente en dos grandes áreas:
+\begin{itemize}
+    \item \textbf{Esquema de \textit{fuentes}}: Actúa como área de \textit{staging} o zona de aterrizaje transitoria para los datos crudos extraídos directamente de las agencias gubernamentales. Alberga tablas independientes sin relaciones de integridad entre sí para cada país (\texttt{spain\_med}, \texttt{chile\_med}, \texttt{canada\_med}, \texttt{usa\_med}, \texttt{portugal\_med}).
+    \item \textbf{Esquema \textit{med}}: Representa el núcleo del modelo relacional normalizado. Aquí es donde convergen de forma estandarizada todos los datos ya limpios y listos para ser consumidos.
+\end{itemize}
+
+El paso a tablas relacionales de este modelo, ilustrado en la Figura \ref{fig:tablas_mer}, muestra cómo se implementa físicamente el esquema de producción (\textit{med}), el cual está constituido por tres elementos clave:
+\begin{itemize}
+    \item \textbf{Tablas Maestras o Diccionarios}: Entidades fuertes y descriptivas que albergan valores estandarizados (\texttt{pais}, \texttt{atc}, \texttt{principio\_activo}, \texttt{forma\_farmaceutica} y \texttt{via\_administracion}).
+    \item \textbf{Entidad Principal (\texttt{medicamento})}: Almacena los atributos fundamentales e identificativos inherentes a cada fármaco (nombre comercial, laboratorio, país de registro) y se nutre mediante claves foráneas (FK) de origen, forma y vía correspondiente.
+    \item \textbf{Tablas Intermedias de Relación (N:M)}: Estructuras relacionales vitales para soportar la multiplicidad del dominio médico. Destacan la tabla \texttt{contiene} (que vincula un medicamento con uno o varios de sus principios activos permitiendo detallar la dosis numérica y de unidad exacta), \texttt{identificado\_por} (asocia un medicamento con sus códigos técnicos ATC) y \texttt{asociado\_con} (enlaza principios activos genéricos con el estándar resolutivo ATC).
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{assets/Tablas_MER.png}
+    \caption{Paso a tablas del Modelo Físico Relacional}
+    \label{fig:tablas_mer}
+\end{figure}
+
 \subsection{Módulo de ETL}
 
 El módulo de ETL (Extracción, Transformación y Carga) es el componente responsable de centralizar, estandarizar y poblar la base de datos de producción con el catálogo internacional de medicamentos. Su funcionamiento se puede apreciar globalmente a través del diagrama de actividad expuesto en la Figura \ref{fig:diagrama_etl}, el cual divide estructuralmente los tres procesos en carriles (\textit{swimlanes}):
