@@ -14,11 +14,19 @@ app = FastAPI(
 # Mensaje de Estado para ruta base
 @app.get("/", tags=["Estado"])
 def root():
+    # Detalles del Endpoint dentro del DocStrings
+    """
+    Muestra el estado de la API.
+    """
     return {"status": "ok", "mensaje": "API de la Aplicación - Activa"}
 
 # Endoint de listado de países
 @app.get("/paises", response_model=list[PaisResponse], tags=["Países"])
 def listar_paises(db: connection = Depends(get_db)):
+    # Detalles del Endpoint dentro del DocStrings
+    """
+    Listado de países de los que se tiene información de Medicamentos.
+    """
     with db.cursor() as cur:
         cur.execute(
             """

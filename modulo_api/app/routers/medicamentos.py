@@ -17,6 +17,12 @@ def busqueda_comercial(
     pais: str | None = Query(default=None, description="Filtrar por código ISO del país (ES, CL, CA, US, PT)"),
     db: connection = Depends(get_db),
 ):
+    # Detalles del Endpoint dentro del DocStrings
+    """
+    Devuelve los medicamentos según nombre comercial o laboratorio titular. 
+    Se puede filtrar por el país de origen de dicho medicamento.
+    """
+
     # Consulta SQL de Búsqueda
     sql = """
         SELECT
@@ -51,6 +57,11 @@ def busqueda_comercial(
 @router.get("/id_med", response_model=MedicamentoDetalle)
 def detalle_medicamento(id_med: int, db: connection = Depends(get_db)):
     
+    """
+    Devuelve los detalles completos del Medicamento según su ID dentro de la Base de Datos. 
+    Contiene información del código ATC y el Principio Activo.
+    """
+
     with db.cursor() as cur:
         # Consulta de Búsqueda - Detalles del Medicamento
         cur.execute(
