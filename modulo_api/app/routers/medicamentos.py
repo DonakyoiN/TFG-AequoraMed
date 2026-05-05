@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from psycopg2.extensions import connection
 from app.database import get_db
 from app.models.medicamento import MedicamentoResumen, MedicamentoDetalle
-from app.models.pais import PaisResponse
+
 
 # Definición de la ruta /medicamentos
 router = APIRouter(
@@ -10,9 +10,9 @@ router = APIRouter(
     tags=["Medicamentos"]
 )
 
-# Endpoint de Búsqueda
-@router.get("/buscar", response_model=list[MedicamentoResumen])
-def buscar_medicamentos(
+# Endpoint de Búsqueda mediante Nombre Comercial o Principio Activo
+@router.get("/busqueda_comercial", response_model=list[MedicamentoResumen])
+def busqueda_comercial(
     q: str = Query(min_length=2, description="Nombre comercial o laboratorio"),
     pais: str | None = Query(default=None, description="Filtrar por código ISO del país (ES, CL, CA, US, PT)"),
     db: connection = Depends(get_db),
