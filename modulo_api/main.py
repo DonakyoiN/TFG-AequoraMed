@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
 from psycopg2.extensions import connection
-from app.routers import medicamentos
+from app.routers import medicamentos, equivalencias
 from app.models.pais import PaisResponse
 from app.database import get_db
 
@@ -32,3 +32,4 @@ def listar_paises(db: connection = Depends(get_db)):
 
 # Incluímos los Routers
 app.include_router(medicamentos.router)
+app.include_router(equivalencias.router)

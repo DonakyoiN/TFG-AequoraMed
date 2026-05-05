@@ -48,7 +48,7 @@ def busqueda_comercial(
     return [MedicamentoResumen(**row) for row in rows]
 
 # Endpoint de Búsqueda de un Medicamento mediante ID
-@router.get("/{id_med}", response_model=MedicamentoDetalle)
+@router.get("/id_med", response_model=MedicamentoDetalle)
 def detalle_medicamento(id_med: int, db: connection = Depends(get_db)):
     
     with db.cursor() as cur:
