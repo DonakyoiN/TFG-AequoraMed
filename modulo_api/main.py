@@ -1,14 +1,18 @@
 from fastapi import FastAPI
+from app.routers import medicamentos
 
-app = FastAPI()
+app = FastAPI(
+    title="ProjectMed API",
+    description="Consulta de Equivalencias Farmacéuticas Internacional",
+    version="1.0.0"
+)
 
-# API Base de la documentación de FastAPI - Para que Funcione
-# TODO: API de la aplicación
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+# TODO: Endpoints para realizar las consultas
 
+# Incluímos los Routers
+app.include_router(medicamentos.router)
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
+# Mensaje de Estado para ruta base
+@app.get("/", tags=["Estado"])
+def root():
+    return {"status": "ok", "mensaje": "API de la Aplicación - Activa"}
