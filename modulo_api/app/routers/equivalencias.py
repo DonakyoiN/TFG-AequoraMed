@@ -39,7 +39,7 @@ def _limit_per_country(rows: list, n: int) -> list:
     return result
 
 # Endpoint de Equivalencia Farmacéutica según ID de Medicamento
-@router.get("/{id_med}", response_model=EquivalenciaResponse)
+@router.get("/id_med", response_model=EquivalenciaResponse)
 def equivalencias_por_medicamento(
     id_med: int,
     pais: list[str] | None = Query(default=None, description="Filtrar equivalentes por código ISO del país destino (repetir para varios: ?pais=ES&pais=CL)"),

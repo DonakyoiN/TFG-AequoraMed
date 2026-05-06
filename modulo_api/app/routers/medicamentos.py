@@ -1,30 +1,54 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
+from typing import Literal
 from psycopg2.extensions import connection
 from app.database import get_db
 from app.models.medicamento import MedicamentoResumen, MedicamentoDetalle
 
-
 # Definición de la ruta /medicamentos
 router = APIRouter(
-    prefix="/medicamentos", 
+    prefix="/medicamentos",
     tags=["Medicamentos"]
 )
 
-# Endpoint de Búsqueda mediante Nombre Comercial o Principio Activo
-@router.get("/busqueda_comercial", response_model=list[MedicamentoResumen])
-def busqueda_comercial(
-    q: str = Query(min_length=2, description="Nombre comercial o laboratorio"),
-    pais: str | None = Query(default=None, description="Filtrar por código ISO del país (ES, CL, CA, US, PT)"),
+# Endpoint de Búsqueda Global de Medicamentos
+@router.get("/buscar", response_model=list[MedicamentoResumen])
+def buscar_medicamentos(
+    q: str = Query(min_length=2, description="Texto a buscar"),
+    modo: Literal["todo", "nombre", "principio_activo", "atc"] = Query(default="todo", description="Campo sobre el que buscar"),
+    pais: list[str] | None = Query(default=None, description="Filtrar por código ISO del país, repetible (?pais=ES&pais=CL)"),
+    forma: str | None = Query(default=None, description="Filtrar por forma farmacéutica (ILIKE)"),
+    via: str | None = Query(default=None, description="Filtrar por vía de administración (ILIKE)"),
+    laboratorio: str | None = Query(default=None, description="Filtrar por laboratorio (ILIKE)"),
+    limit: int = Query(default=50, ge=1, le=200, description="Número máximo de resultados"),
+    offset: int = Query(default=0, ge=0, description="Desplazamiento para paginación"),
     db: connection = Depends(get_db),
 ):
-    # Detalles del Endpoint dentro del DocStrings
     """
-    Devuelve los medicamentos según nombre comercial o laboratorio titular. 
-    Se puede filtrar por el país de origen de dicho medicamento.
+    Búsqueda global de medicamentos.
+    - modo=nombre: Búsqueda por Nombre Comercial del medicamento.
+    - modo=principio_activo: Búsqueda por Principio Activo del medicamento.
+    - modo=atc: Búsqueda por Código ATC del medicamento.
+    - modo=todo (defecto): OR de los tres criterios anteriores.
+    Admite filtros adicionales por país, forma farmacéutica, vía y laboratorio, más paginación.
     """
+    q_like = f"%{q}%"
 
-    # Consulta SQL de Búsqueda
-    sql = """
+    # Cláusulas WHERE según el modo de búsqueda
+    if modo == "nombre":
+        where_busqueda = "m.nom_comercial ILIKE %(q)s"
+    elif modo == "principio_activo":
+        where_busqueda = "EXISTS (SELECT 1 FROM med.contiene c JOIN med.principio_activo pa ON c.id_pa = pa.id_pa WHERE c.id_med = m.id_med AND pa.nom_estandar ILIKE %(q)s)"
+    elif modo == "atc":
+        where_busqueda = "EXISTS (SELECT 1 FROM med.identificado_por ip JOIN med.atc a ON ip.id_atc = a.id_atc WHERE ip.id_med = m.id_med AND a.code_atc ILIKE %(q)s)"
+    else:
+        where_busqueda = """(
+            m.nom_comercial ILIKE %(q)s
+            OR EXISTS (SELECT 1 FROM med.contiene c JOIN med.principio_activo pa ON c.id_pa = pa.id_pa WHERE c.id_med = m.id_med AND pa.nom_estandar ILIKE %(q)s)
+            OR EXISTS (SELECT 1 FROM med.identificado_por ip JOIN med.atc a ON ip.id_atc = a.id_atc WHERE ip.id_med = m.id_med AND a.code_atc ILIKE %(q)s)
+        )"""
+
+    # Consulta con los detalles del Medicamento
+    sql = f"""
         SELECT
             m.id_med, m.nom_comercial, m.laboratorio,
             p.iso_code, p.nom_pais,
@@ -34,18 +58,29 @@ def busqueda_comercial(
         JOIN med.pais p ON m.id_pais = p.id_pais
         LEFT JOIN med.forma_farmaceutica ff ON m.id_forma = ff.id_forma
         LEFT JOIN med.via_administracion va ON m.id_via = va.id_via
-        WHERE (
-            m.nom_comercial ILIKE %(q)s
-            OR m.laboratorio ILIKE %(q)s
-        )
+        WHERE {where_busqueda}
     """
-    params: dict = {"q": f"%{q}%"}
+    params: dict = {"q": q_like}
 
     if pais:
-        sql += " AND p.iso_code = %(pais)s"
-        params["pais"] = pais.upper()
+        sql += " AND p.iso_code = ANY(%(pais)s)"
+        params["pais"] = [p.upper() for p in pais]
 
-    sql += " ORDER BY m.nom_comercial LIMIT 50"
+    if forma:
+        sql += " AND ff.descripcion ILIKE %(forma)s"
+        params["forma"] = f"%{forma}%"
+
+    if via:
+        sql += " AND va.descripcion ILIKE %(via)s"
+        params["via"] = f"%{via}%"
+
+    if laboratorio:
+        sql += " AND m.laboratorio ILIKE %(laboratorio)s"
+        params["laboratorio"] = f"%{laboratorio}%"
+
+    sql += " ORDER BY m.nom_comercial LIMIT %(limit)s OFFSET %(offset)s"
+    params["limit"] = limit
+    params["offset"] = offset
 
     with db.cursor() as cur:
         cur.execute(sql, params)
