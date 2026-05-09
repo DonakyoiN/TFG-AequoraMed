@@ -85,7 +85,7 @@
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Principio activo" />
+                    android:text="Principio Activo" />
 
             </com.google.android.material.chip.ChipGroup>
 
