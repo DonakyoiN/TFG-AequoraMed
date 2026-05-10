@@ -4,20 +4,34 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/searchFragment">
 
+    <!-- TODO: Asignar un nombre a la Aplicación -->
     <fragment
         android:id="@+id/searchFragment"
         android:name="esei.uvigo.es.tfg_donakyoin.fragments.SearchFragment"
-        android:label="SearchFragment" />
+        android:label="ProjectMed">
+        <action
+            android:id="@+id/action_searchFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="esei.uvigo.es.tfg_donakyoin.fragments.DetailFragment"
+        android:label="Información">
+        <argument
+            android:name="idMed"
+            app:argType="integer" />
+    </fragment>
 
     <fragment
         android:id="@+id/savedFragment"
         android:name="esei.uvigo.es.tfg_donakyoin.fragments.SavedFragment"
-        android:label="SavedFragment" />
+        android:label="ProjectMed" />
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="esei.uvigo.es.tfg_donakyoin.fragments.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="ProjectMed" />
 
 
 </navigation>

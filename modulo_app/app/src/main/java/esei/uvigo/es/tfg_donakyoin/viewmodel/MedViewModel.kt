@@ -38,6 +38,10 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     private val _vias = MutableLiveData<List<ViaAdministracionDto>>()
     val vias: LiveData<List<ViaAdministracionDto>> = _vias
 
+    // Detalle de Medicamento
+    private val _detalle = MutableLiveData<MedicamentoDetalleDto?>()
+    val detalle: LiveData<MedicamentoDetalleDto?> = _detalle
+
     // Estado de Carga
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
@@ -45,6 +49,19 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     // Error
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
+
+    // Mostrar Detalles del Medicamento
+    fun cargarDetalle(idMed: Int) {
+        viewModelScope.launch {
+            _detalle.value = null
+            _isLoading.value = true
+            _error.value = null
+            repository.getDetalleMedicamento(idMed)
+                .onSuccess { _detalle.value = it }
+                .onFailure { _error.value = it.message }
+            _isLoading.value = false
+        }
+    }
 
     // Búsqueda de Medicamentos
     fun buscarMedicamentos(

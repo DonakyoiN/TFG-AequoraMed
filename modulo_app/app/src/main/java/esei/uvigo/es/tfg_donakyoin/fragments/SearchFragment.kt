@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 
 class SearchFragment : Fragment() {
@@ -39,7 +40,9 @@ class SearchFragment : Fragment() {
 
         // Inicialización de Adapter
         adapter = MedAdapter { med ->
-            // TODO: Navegación al detalle
+            // Navegación a Detalles
+            val action = SearchFragmentDirections.actionSearchFragmentToDetailFragment(med.id_med)
+            findNavController().navigate(action)
         }
 
         // DataBinding

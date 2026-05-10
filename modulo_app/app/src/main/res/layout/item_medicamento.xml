@@ -33,20 +33,19 @@
                 android:textColor="?attr/colorOnSurface"
                 android:maxLines="2"
                 android:ellipsize="end"
-                app:layout_constraintEnd_toStartOf="@id/chip_pais"
+                app:layout_constraintEnd_toStartOf="@id/iv_bandera"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_pais"
-                style="@style/Widget.Material3.Chip.Suggestion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/iv_bandera"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_marginStart="8dp"
-                android:text="@{med.nom_pais}"
-                app:layout_constraintBaseline_toBaselineOf="@id/tv_nombre_comercial"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:scaleType="fitCenter"
+                android:contentDescription="@{med.nom_pais}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
                 android:id="@+id/tv_laboratorio"
