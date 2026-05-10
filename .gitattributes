@@ -1,3 +1,3 @@
 # Lenguajes utilizados (además de Python y Kotlin)
-*.xml linguist-detectable=true
+*.xml linguist-detectable=true linguist-generated=false
 *.sql linguist-detectable=true
