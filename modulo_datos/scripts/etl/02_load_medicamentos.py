@@ -37,7 +37,7 @@ def insert_spain(cursor, dict_pais, dict_forma, dict_via):
         id_v = None
         if vias and vias.strip():
             id_v = dict_via.get(vias.split(',')[0].strip().upper())
-        dosaje = dosis.strip() if dosis and dosis.strip() else None
+        dosaje = dosis.strip().lower() if dosis and dosis.strip() else None
         to_insert.append((id_pais, str(reg_pais), nom, lab, dosaje, id_f, id_v))
 
     if to_insert:
@@ -75,22 +75,18 @@ def insert_canada(cursor, dict_pais, dict_forma, dict_via):
     cursor.execute("DELETE FROM med.medicamento WHERE id_pais = %s", (id_pais,))
 
     cursor.execute("""
-        SELECT din, brand_name, company_name, pharmaceutical_form, route_administration, strength, strength_unit
+        SELECT din, brand_name, company_name, pharmaceutical_form, route_administration, strength
         FROM fuentes.canada_med
     """)
     to_insert = []
     for row in cursor.fetchall():
-        reg_pais, nom, lab, forma, vias, strength, strength_unit = row
+        reg_pais, nom, lab, forma, vias, strength = row
         if not reg_pais: continue
         id_f = dict_forma.get(forma.strip().upper()) if forma and forma.strip() else None
         id_v = None
         if vias and vias.strip():
             id_v = dict_via.get(vias.split(',')[0].strip().upper())
-        if strength and strength.strip() and strength.strip() != 'N/A':
-            dosaje = f"{strength.strip()} {strength_unit.strip()}".strip() if strength_unit and strength_unit.strip() != 'N/A' else strength.strip()
-            dosaje = dosaje.lower()
-        else:
-            dosaje = None
+        dosaje = strength.strip().lower() if strength and strength.strip() and strength.strip() != 'N/A' else None
         to_insert.append((id_pais, str(reg_pais), nom, lab, dosaje, id_f, id_v))
 
     if to_insert:

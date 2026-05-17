@@ -67,7 +67,7 @@ def cargar_datos_fda():
             marketing_status = producto.get('marketing_status', 'N/A')
             
             active_ingredients = producto.get('active_ingredients', [])
-            strengths = " / ".join([i.get('strength', '') for i in active_ingredients])
+            strengths = ", ".join([i.get('strength', '') for i in active_ingredients])
             
             openfda_data = med.get('openfda', {})
             rxcuis = openfda_data.get('rxcui', ['N/A']) 

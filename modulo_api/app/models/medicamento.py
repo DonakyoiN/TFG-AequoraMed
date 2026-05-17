@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from .principio_activo import PrincipioActivoResponse
 from .atc import AtcResponse
 
-# Modelo de la Entidad: Medicamento
+# Modelo de la Entidad: Medicamento -> Para Item Card en App
 class MedicamentoResumen(BaseModel):
     id_med: int
     nom_comercial: str
@@ -12,8 +12,16 @@ class MedicamentoResumen(BaseModel):
     forma_farmaceutica: str | None
     via_administracion: str | None
 
-class MedicamentoDetalle(MedicamentoResumen):
+# Modelo de Medicamento con los Detalles -> Para Fragment Detail en App
+class MedicamentoDetalle(BaseModel):
+    id_med: int
+    nom_comercial: str
     reg_pais: str | None
+    laboratorio: str | None
+    iso_code: str
+    nom_pais: str
+    forma_farmaceutica: str | None
+    via_administracion: str | None
     dosaje: str | None
     principios_activos: list[PrincipioActivoResponse]
     codigos_atc: list[AtcResponse]
