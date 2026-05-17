@@ -1,7 +1,11 @@
--- Active: 1774201589902@@127.0.0.1@5432@db_med
+
 /*
-  ||  DDL con la creación de Tablas para la base de datos ||
+  ||  DDL de la base de datos  ||
 */
+
+-- SCHEMAS de la Base de Datos
+CREATE SCHEMA IF NOT EXISTS fuentes;
+CREATE SCHEMA IF NOT EXISTS med;
 
 -- FUENTES EXTERNAS
 -- Tabla para almacenar los medicamentos de CIMA Rest API para España
@@ -15,7 +19,6 @@ CREATE TABLE fuentes.spain_med(
     vias_administracion     TEXT,
     forma_farmaceutica      TEXT,
     estado                  TEXT,
-    cpresc                  TEXT,
 
     PRIMARY KEY (nregistro)
 );
@@ -50,7 +53,7 @@ CREATE TABLE fuentes.canada_med(
     PRIMARY KEY (drug_code)
 );
 
--- Tabla para almacernar los medicamentos de Estados Unidos: RxNorm + Drugs@FDA
+-- Tabla para almacenar los medicamentos de Estados Unidos: RxNorm + Drugs@FDA
 CREATE TABLE fuentes.usa_med(
     rxnorm_id                   TEXT,
     application_number          TEXT,
@@ -58,7 +61,7 @@ CREATE TABLE fuentes.usa_med(
     name_ingredient             TEXT,
     brand_name                  TEXT,
     sponsor_name                TEXT,
-    stength                     TEXT,
+    strength                    TEXT,
     route_administration        TEXT,
     dosage_form                 TEXT,
     marketing_status            TEXT,
@@ -132,6 +135,7 @@ CREATE TABLE med.medicamento(
     reg_pais        TEXT,
     nom_comercial   TEXT,
     laboratorio     TEXT,
+    dosaje          TEXT,
     id_forma        INT,
     id_via          INT,
 
@@ -139,15 +143,13 @@ CREATE TABLE med.medicamento(
 
     FOREIGN KEY (id_pais) REFERENCES med.pais (id_pais) ON DELETE CASCADE,
     FOREIGN KEY (id_forma) REFERENCES med.forma_farmaceutica (id_forma) ON DELETE CASCADE,
-    FOREIGN KEY (id_via) REFERENCES med.via_administracion (id_via) ON DELETE CASCADE     
+    FOREIGN KEY (id_via) REFERENCES med.via_administracion (id_via) ON DELETE CASCADE
 );
 
 -- Tabla N:M MEDICAMENTO-PRINCIPIO ACTIVO
 CREATE TABLE med.contiene(
     id_med          INT,
     id_pa           INT,
-    dosis_valor     FLOAT,
-    dosis_unit      TEXT,
 
     PRIMARY KEY (id_med, id_pa),
 
