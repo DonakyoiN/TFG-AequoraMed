@@ -80,14 +80,13 @@ def insert_contiene(cursor, dict_pais, dict_med, dict_pa):
             parts = [v.strip().upper() for v in val.split('/')]
             for p in parts:
                 if p and p in dict_pa:
-                    # Null para dosis_valor y dosis_unit por el momento - Probablemente lo termine quitando estos atributos
-                    to_insert.append((id_med, dict_pa[p], None, None))
-                    
+                    to_insert.append((id_med, dict_pa[p]))
+
     if to_insert:
         dedup_set = set(to_insert)
         cursor.executemany("""
-            INSERT INTO med.contiene (id_med, id_pa, dosis_valor, dosis_unit)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO med.contiene (id_med, id_pa)
+            VALUES (%s, %s)
             ON CONFLICT DO NOTHING
         """, list(dedup_set))
 

@@ -91,7 +91,13 @@ def insert_atc(cursor):
     
     for code in sorted(list(atc_set)):
         if code not in existing:
-            to_insert.append((code, atc_desc_es.get(code), atc_desc_en.get(code)))
+            desc_es = atc_desc_es.get(code)
+            desc_en = atc_desc_en.get(code)
+            to_insert.append((
+                code,
+                desc_es.title() if desc_es else None,
+                desc_en.title() if desc_en else None
+            ))
     
     if to_insert:
         cursor.executemany("""
@@ -117,10 +123,10 @@ def insert_principios_activos(cursor):
             val = row[0]
             if not val: continue
             val = val.replace(' y ', '/').replace(' AND ', '/').replace(' and ', '/').replace('+', '/')
-            parts = [v.strip().upper() for v in val.split('/')]
+            parts = [v.strip().title() for v in val.split('/')]
             for p in parts:
                 if p: pa_set.add(p)
-                    
+
     cursor.execute("SELECT nom_estandar FROM med.principio_activo")
     existing = {row[0] for row in cursor.fetchall()}
     to_insert = [(pa,) for pa in sorted(list(pa_set)) if pa not in existing]
@@ -146,7 +152,7 @@ def insert_formas_vias(cursor):
         cursor.execute(q)
         for row in cursor.fetchall():
             val = row[0]
-            if val and val.strip(): formas_set.add(val.strip().upper())
+            if val and val.strip(): formas_set.add(val.strip().title())
                 
     cursor.execute("SELECT descripcion FROM med.forma_farmaceutica")
     existing_formas = {row[0] for row in cursor.fetchall()}
@@ -171,7 +177,7 @@ def insert_formas_vias(cursor):
             val = row[0]
             if not val: continue
             for v in val.split(','):
-                if v.strip(): vias_set.add(v.strip().upper())
+                if v.strip(): vias_set.add(v.strip().title())
 
     cursor.execute("SELECT descripcion FROM med.via_administracion")
     existing_vias = {row[0] for row in cursor.fetchall()}
