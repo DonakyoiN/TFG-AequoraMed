@@ -38,14 +38,15 @@ def insert_atc(cursor):
         pa_parts = []
         if pa_val:
             pa_parts = [v.strip().upper() for v in pa_val.replace(' y ', '/').replace('+', '/').split('/')]
-            
+
         for i, code in enumerate(atc_parts):
             if code:
                 atc_set.add(code)
+                if not pa_parts: continue
                 if len(atc_parts) == len(pa_parts):
                     atc_desc_es[code] = pa_parts[i]
-                elif len(pa_parts) == 1:
-                    atc_desc_es[code] = pa_parts[0]
+                else:
+                    atc_desc_es[code] = ' / '.join(pa_parts)
 
     # USA -> desc_en
     cursor.execute("SELECT id_atc, name_ingredient FROM fuentes.usa_med WHERE id_atc IS NOT NULL")
@@ -55,14 +56,15 @@ def insert_atc(cursor):
         pa_parts = []
         if pa_val:
             pa_parts = [v.strip().upper() for v in pa_val.replace(' AND ', '/').replace(' and ', '/').replace('+', '/').split('/')]
-            
+
         for i, code in enumerate(atc_parts):
             if code:
                 atc_set.add(code)
+                if not pa_parts: continue
                 if len(atc_parts) == len(pa_parts):
                     atc_desc_en[code] = pa_parts[i]
-                elif len(pa_parts) == 1:
-                    atc_desc_en[code] = pa_parts[0]
+                else:
+                    atc_desc_en[code] = ' / '.join(pa_parts)
 
     # CANADA -> desc_en
     cursor.execute("SELECT atc_number, ingredient_name FROM fuentes.canada_med WHERE atc_number IS NOT NULL")
@@ -72,15 +74,16 @@ def insert_atc(cursor):
         pa_parts = []
         if pa_val:
             pa_parts = [v.strip().upper() for v in pa_val.replace(' AND ', '/').replace(' and ', '/').replace('+', '/').split('/')]
-            
+
         for i, code in enumerate(atc_parts):
             if code:
                 atc_set.add(code)
                 if code not in atc_desc_en:
+                    if not pa_parts: continue
                     if len(atc_parts) == len(pa_parts):
                         atc_desc_en[code] = pa_parts[i]
-                    elif len(pa_parts) == 1:
-                        atc_desc_en[code] = pa_parts[0]
+                    else:
+                        atc_desc_en[code] = ' / '.join(pa_parts)
                     
     cursor.execute("SELECT code_atc FROM med.atc")
     existing = {row[0] for row in cursor.fetchall()}
