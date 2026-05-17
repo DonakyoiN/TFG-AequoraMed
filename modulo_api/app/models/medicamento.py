@@ -13,5 +13,7 @@ class MedicamentoResumen(BaseModel):
     via_administracion: str | None
 
 class MedicamentoDetalle(MedicamentoResumen):
+    reg_pais: str | None
+    dosaje: str | None
     principios_activos: list[PrincipioActivoResponse]
     codigos_atc: list[AtcResponse]

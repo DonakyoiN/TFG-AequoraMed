@@ -103,6 +103,7 @@ def detalle_medicamento(id_med: int, db: connection = Depends(get_db)):
             """
             SELECT
                 m.id_med, m.nom_comercial, m.laboratorio,
+                m.reg_pais, m.dosaje,
                 p.iso_code, p.nom_pais,
                 ff.descripcion AS forma_farmaceutica,
                 va.descripcion AS via_administracion

@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 from db_conn import get_connection
 
 # Carga de los países, vías de administración y forma farmacéutica
@@ -87,6 +88,7 @@ def insert_canada(cursor, dict_pais, dict_forma, dict_via):
             id_v = dict_via.get(vias.split(',')[0].strip().upper())
         if strength and strength.strip() and strength.strip() != 'N/A':
             dosaje = f"{strength.strip()} {strength_unit.strip()}".strip() if strength_unit and strength_unit.strip() != 'N/A' else strength.strip()
+            dosaje = dosaje.lower()
         else:
             dosaje = None
         to_insert.append((id_pais, str(reg_pais), nom, lab, dosaje, id_f, id_v))
@@ -115,7 +117,10 @@ def insert_usa(cursor, dict_pais, dict_forma, dict_via):
         id_v = None
         if vias and vias.strip():
             id_v = dict_via.get(vias.split(',')[0].strip().upper())
-        dosaje = strength.strip() if strength and strength.strip() and strength.strip() != 'N/A' else None
+        if strength and strength.strip() and strength.strip() != 'N/A':
+            dosaje = re.sub(r'(\d)([a-zA-Z])', r'\1 \2', strength.strip().lower())
+        else:
+            dosaje = None
         to_insert.append((id_pais, str(reg_pais), nom, lab, dosaje, id_f, id_v))
 
     if to_insert:
@@ -139,8 +144,8 @@ def insert_portugal(cursor, dict_pais, dict_forma):
         reg_pais, nom, lab, forma, strength = row
         if not reg_pais: continue
         id_f = dict_forma.get(forma.strip().upper()) if forma and forma.strip() else None
-        dosaje = strength.strip() if strength and strength.strip() and strength.strip() != 'N/A' else None
-        to_insert.append((id_pais, str(reg_pais), nom, lab, dosaje, id_f, None))
+        dosaje = strength.strip().lower() if strength and strength.strip() and strength.strip() != 'N/A' else None
+        to_insert.append((id_pais, str(reg_pais), nom.upper() if nom else nom, lab, dosaje, id_f, None))
 
     if to_insert:
         cursor.executemany("""
