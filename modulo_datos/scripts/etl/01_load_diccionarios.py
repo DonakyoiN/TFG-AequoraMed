@@ -194,6 +194,14 @@ def main():
     if conn is None: return
     try:
         cursor = conn.cursor()
+        # Limpieza de Datos del Schema de Medicamentos
+        cursor.execute("""
+            TRUNCATE med.pais, med.atc, med.principio_activo, med.forma_farmaceutica,
+            med.via_administracion, med.medicamento, med.contiene, med.identificado_por,
+            med.asociado_con RESTART IDENTITY CASCADE
+        """)
+        # Medicamentos empiezan con esta ID para tener consistencias con datos previos.
+        cursor.execute("ALTER SEQUENCE med.medicamento_id_med_seq RESTART WITH 119325")
         insert_paises(cursor)
         insert_atc(cursor)
         insert_principios_activos(cursor)

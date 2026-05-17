@@ -18,7 +18,7 @@ def load_data_maps(cursor):
     
     # Obtener datos de Principios Activos: id_pa y nombres estándar
     cursor.execute("SELECT nom_estandar, id_pa FROM med.principio_activo")
-    dict_pa = {row[0]: row[1] for row in cursor.fetchall()}
+    dict_pa = {row[0].upper(): row[1] for row in cursor.fetchall()}
     
     return dict_pais, dict_med, dict_atc, dict_pa
 
@@ -30,7 +30,7 @@ def insert_identificado_por(cursor, dict_pais, dict_med, dict_atc):
     # Consultas por País
     queries = [
         ('ES', "SELECT nregistro, atc FROM fuentes.spain_med WHERE atc IS NOT NULL"),
-        ('CA', "SELECT drug_code, atc_number FROM fuentes.canada_med WHERE atc_number IS NOT NULL"),
+        ('CA', "SELECT din, atc_number FROM fuentes.canada_med WHERE atc_number IS NOT NULL"),
         ('US', "SELECT application_number, id_atc FROM fuentes.usa_med WHERE id_atc IS NOT NULL")
     ]
     
@@ -62,7 +62,7 @@ def insert_contiene(cursor, dict_pais, dict_med, dict_pa):
     queries = [
         ('ES', "SELECT nregistro, principios_activos FROM fuentes.spain_med WHERE principios_activos IS NOT NULL"),
         ('CL', "SELECT registro, principio_activo FROM fuentes.chile_med WHERE principio_activo IS NOT NULL"),
-        ('CA', "SELECT drug_code, ingredient_name FROM fuentes.canada_med WHERE ingredient_name IS NOT NULL"),
+        ('CA', "SELECT din, ingredient_name FROM fuentes.canada_med WHERE ingredient_name IS NOT NULL"),
         ('US', "SELECT application_number as r_pais, name_ingredient FROM fuentes.usa_med WHERE name_ingredient IS NOT NULL"),
         ('PT', "SELECT id_ptmet::TEXT, active_substance FROM fuentes.portugal_med WHERE active_substance IS NOT NULL")
     ]
