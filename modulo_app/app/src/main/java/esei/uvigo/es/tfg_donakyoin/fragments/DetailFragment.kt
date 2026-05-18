@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
+import androidx.core.view.isVisible
 import com.google.android.material.chip.Chip
 import esei.uvigo.es.tfg_donakyoin.R
 import esei.uvigo.es.tfg_donakyoin.databinding.FragmentDetailBinding
@@ -59,6 +60,15 @@ class DetailFragment : Fragment() {
         binding.detalle = detalle
         binding.executePendingBindings()
 
+        // Registro: Ocultar si es Portugal (id_pt != registro)
+        binding.rowRegPais.isVisible = detalle.iso_code != "PT"
+        binding.textLabelRegPais.text = registroLabelFor(detalle.iso_code)
+        binding.textRegPais.text = detalle.reg_pais
+
+        // Dosaje: Ocultar si es null (CL + algunos med sin dosis)
+        binding.rowDosaje.isVisible = detalle.dosaje != null
+        binding.textDosaje.text = detalle.dosaje
+
         // Bandera
         val flagRes = flagResFor(detalle.iso_code)
         if (flagRes != null) binding.ivBanderaDetalle.setImageResource(flagRes)
@@ -101,6 +111,13 @@ class DetailFragment : Fragment() {
                 binding.chipGroupPrincipios.addView(chip)
             }
         }
+    }
+
+    // Determinar nombre para Registro de Medicamento según País
+    private fun registroLabelFor(isoCode: String): String = when (isoCode.uppercase()) {
+        "CA" -> "Drug Identification Number (DIN)"
+        "US" -> "Application Number"
+        else -> "Nº de Registro"
     }
 
     // Asignación de Banderas según ISO

@@ -17,11 +17,13 @@ data class MedicamentoDto(
 data class MedicamentoDetalleDto(
     val id_med: Int,
     val nom_comercial: String,
+    val reg_pais: String? = null,
     val laboratorio: String? = null,
     val iso_code: String,
     val nom_pais: String,
     val forma_farmaceutica: String? = null,
     val via_administracion: String? = null,
+    val dosaje: String? = null,
     val principios_activos: List<PrincipioActivoDto>,
     val codigos_atc: List<AtcDto>
 )
