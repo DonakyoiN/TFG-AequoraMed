@@ -31,7 +31,6 @@ def procesar_medicamento(med):
     nregistro = med.get("nregistro") # Número de registro del medicamento, Tipo Texto
     nombre = med.get("nombre") # Nombre del medicamento, Tipo Texto
     labtitular = med.get("labtitular") # Laboratorio titular del medicamento, Tipo Texto
-    cpresc = med.get("cpresc", "SIN RECETA") # Condiciones de prescripción del medicamento, Tipo Texto
     dosis = med.get("dosis", "") # Dosis del o los principios activos, Tipos Texto
     estado_obj = med.get("estado", {}) # Estado de registro del medicamento, Tipo estado
     
@@ -80,7 +79,7 @@ def procesar_medicamento(med):
     except Exception as e:
         print(f"No se pudo obtener detalle del medicamento {nregistro}: {e}")
     
-    return (nregistro, atc_str, pa_str, nombre, labtitular, dosis, vias_str, forma_farmaceutica, estado, cpresc)
+    return (nregistro, atc_str, pa_str, nombre, labtitular, dosis, vias_str, forma_farmaceutica, estado)
 
 # Función para insertar datos a la database
 def carga_datos_spainmed():
@@ -144,8 +143,8 @@ def carga_datos_spainmed():
 
         # Inserta los detalles del medicamento en la tabla spain_med
         insert_spainmed = """
-        INSERT INTO fuentes.spain_med 
-        (nregistro, atc, principios_activos, nombre, labtitular, dosis, vias_administracion, forma_farmaceutica, estado, cpresc)
+        INSERT INTO fuentes.spain_med
+        (nregistro, atc, principios_activos, nombre, labtitular, dosis, vias_administracion, forma_farmaceutica, estado)
         VALUES %s
         ON CONFLICT (nregistro) DO UPDATE SET 
             atc = EXCLUDED.atc,

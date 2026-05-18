@@ -71,6 +71,31 @@
                             android:orientation="vertical"
                             android:padding="16dp">
 
+                            <!-- Registro -->
+                            <LinearLayout
+                                android:id="@+id/row_reg_pais"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+                                <TextView
+                                    android:id="@+id/text_label_reg_pais"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                                <TextView
+                                    android:id="@+id/text_reg_pais"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                                    android:textColor="?attr/colorOnSurface" />
+
+                            </LinearLayout>
+
                             <!-- Laboratorio -->
                             <LinearLayout
                                 android:id="@+id/row_laboratorio"
@@ -179,6 +204,31 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@{detalle.via_administracion}"
+                                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                                    android:textColor="?attr/colorOnSurface" />
+
+                            </LinearLayout>
+
+                            <!-- Dosajes disponibles -->
+                            <LinearLayout
+                                android:id="@+id/row_dosaje"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Dosajes disponibles"
+                                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                                <TextView
+                                    android:id="@+id/text_dosaje"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
                                     android:textAppearance="?attr/textAppearanceBodyMedium"
                                     android:textColor="?attr/colorOnSurface" />
 

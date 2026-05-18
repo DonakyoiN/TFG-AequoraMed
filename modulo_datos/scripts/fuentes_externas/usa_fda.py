@@ -67,7 +67,7 @@ def cargar_datos_fda():
             marketing_status = producto.get('marketing_status', 'N/A')
             
             active_ingredients = producto.get('active_ingredients', [])
-            strengths = " / ".join([i.get('strength', '') for i in active_ingredients])
+            strengths = ", ".join([i.get('strength', '') for i in active_ingredients])
             
             openfda_data = med.get('openfda', {})
             rxcuis = openfda_data.get('rxcui', ['N/A']) 
@@ -80,7 +80,7 @@ def cargar_datos_fda():
                 'name_ingredient': 'N/A', # Principio Activo Vacío -> Será asignado con script RxNorm 
                 'brand_name': brand_name,
                 'sponsor_name': sponsor_name,
-                'stength': strengths if strengths else 'N/A',
+                'strength': strengths if strengths else 'N/A',
                 'route_administration': route,
                 'dosage_form': dosage_form,
                 'marketing_status': marketing_status
@@ -111,7 +111,7 @@ def cargar_datos_fda():
         insert_usa = """
             INSERT INTO fuentes.usa_med (
                 rxnorm_id, application_number, id_atc, name_ingredient, brand_name,
-                sponsor_name, stength, route_administration, dosage_form, marketing_status
+                sponsor_name, strength, route_administration, dosage_form, marketing_status
             ) VALUES %s
             ON CONFLICT (rxnorm_id, application_number) DO NOTHING;
         """

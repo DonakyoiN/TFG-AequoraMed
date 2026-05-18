@@ -38,14 +38,15 @@ def insert_atc(cursor):
         pa_parts = []
         if pa_val:
             pa_parts = [v.strip().upper() for v in pa_val.replace(' y ', '/').replace('+', '/').split('/')]
-            
+
         for i, code in enumerate(atc_parts):
             if code:
                 atc_set.add(code)
+                if not pa_parts: continue
                 if len(atc_parts) == len(pa_parts):
                     atc_desc_es[code] = pa_parts[i]
-                elif len(pa_parts) == 1:
-                    atc_desc_es[code] = pa_parts[0]
+                else:
+                    atc_desc_es[code] = ' / '.join(pa_parts)
 
     # USA -> desc_en
     cursor.execute("SELECT id_atc, name_ingredient FROM fuentes.usa_med WHERE id_atc IS NOT NULL")
@@ -55,14 +56,15 @@ def insert_atc(cursor):
         pa_parts = []
         if pa_val:
             pa_parts = [v.strip().upper() for v in pa_val.replace(' AND ', '/').replace(' and ', '/').replace('+', '/').split('/')]
-            
+
         for i, code in enumerate(atc_parts):
             if code:
                 atc_set.add(code)
+                if not pa_parts: continue
                 if len(atc_parts) == len(pa_parts):
                     atc_desc_en[code] = pa_parts[i]
-                elif len(pa_parts) == 1:
-                    atc_desc_en[code] = pa_parts[0]
+                else:
+                    atc_desc_en[code] = ' / '.join(pa_parts)
 
     # CANADA -> desc_en
     cursor.execute("SELECT atc_number, ingredient_name FROM fuentes.canada_med WHERE atc_number IS NOT NULL")
@@ -72,15 +74,16 @@ def insert_atc(cursor):
         pa_parts = []
         if pa_val:
             pa_parts = [v.strip().upper() for v in pa_val.replace(' AND ', '/').replace(' and ', '/').replace('+', '/').split('/')]
-            
+
         for i, code in enumerate(atc_parts):
             if code:
                 atc_set.add(code)
                 if code not in atc_desc_en:
+                    if not pa_parts: continue
                     if len(atc_parts) == len(pa_parts):
                         atc_desc_en[code] = pa_parts[i]
-                    elif len(pa_parts) == 1:
-                        atc_desc_en[code] = pa_parts[0]
+                    else:
+                        atc_desc_en[code] = ' / '.join(pa_parts)
                     
     cursor.execute("SELECT code_atc FROM med.atc")
     existing = {row[0] for row in cursor.fetchall()}
@@ -88,7 +91,13 @@ def insert_atc(cursor):
     
     for code in sorted(list(atc_set)):
         if code not in existing:
-            to_insert.append((code, atc_desc_es.get(code), atc_desc_en.get(code)))
+            desc_es = atc_desc_es.get(code)
+            desc_en = atc_desc_en.get(code)
+            to_insert.append((
+                code,
+                desc_es.title() if desc_es else None,
+                desc_en.title() if desc_en else None
+            ))
     
     if to_insert:
         cursor.executemany("""
@@ -114,10 +123,10 @@ def insert_principios_activos(cursor):
             val = row[0]
             if not val: continue
             val = val.replace(' y ', '/').replace(' AND ', '/').replace(' and ', '/').replace('+', '/')
-            parts = [v.strip().upper() for v in val.split('/')]
+            parts = [v.strip().title() for v in val.split('/')]
             for p in parts:
                 if p: pa_set.add(p)
-                    
+
     cursor.execute("SELECT nom_estandar FROM med.principio_activo")
     existing = {row[0] for row in cursor.fetchall()}
     to_insert = [(pa,) for pa in sorted(list(pa_set)) if pa not in existing]
@@ -143,7 +152,7 @@ def insert_formas_vias(cursor):
         cursor.execute(q)
         for row in cursor.fetchall():
             val = row[0]
-            if val and val.strip(): formas_set.add(val.strip().upper())
+            if val and val.strip(): formas_set.add(val.strip().title())
                 
     cursor.execute("SELECT descripcion FROM med.forma_farmaceutica")
     existing_formas = {row[0] for row in cursor.fetchall()}
@@ -168,7 +177,7 @@ def insert_formas_vias(cursor):
             val = row[0]
             if not val: continue
             for v in val.split(','):
-                if v.strip(): vias_set.add(v.strip().upper())
+                if v.strip(): vias_set.add(v.strip().title())
 
     cursor.execute("SELECT descripcion FROM med.via_administracion")
     existing_vias = {row[0] for row in cursor.fetchall()}
@@ -185,6 +194,14 @@ def main():
     if conn is None: return
     try:
         cursor = conn.cursor()
+        # Limpieza de Datos del Schema de Medicamentos
+        cursor.execute("""
+            TRUNCATE med.pais, med.atc, med.principio_activo, med.forma_farmaceutica,
+            med.via_administracion, med.medicamento, med.contiene, med.identificado_por,
+            med.asociado_con RESTART IDENTITY CASCADE
+        """)
+        # Medicamentos empiezan con esta ID para tener consistencias con datos previos.
+        cursor.execute("ALTER SEQUENCE med.medicamento_id_med_seq RESTART WITH 119325")
         insert_paises(cursor)
         insert_atc(cursor)
         insert_principios_activos(cursor)

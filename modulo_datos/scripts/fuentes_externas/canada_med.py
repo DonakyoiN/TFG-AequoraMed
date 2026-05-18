@@ -38,10 +38,22 @@ def cargar_datos_canadamed():
 
     # Agrupación de datos con más de un Principio Activo
     df_ing_name = df_ingredients.groupby('drug_code')['ingredient_name'].apply(lambda x: ' / '.join(x.dropna().astype(str).unique())).reset_index()
-    df_ing_str = df_ingredients.groupby('drug_code')['strength'].apply(lambda x: ' / '.join(x.dropna().astype(str).unique())).reset_index()
-    df_ing_unit = df_ingredients.groupby('drug_code')['strength_unit'].apply(lambda x: ' / '.join(x.dropna().astype(str).unique())).reset_index()
 
-    df_ing_grouped = df_ing_name.merge(df_ing_str, on='drug_code').merge(df_ing_unit, on='drug_code')
+    # Combinación de Dosaje por Ingrediente: empareja strength + strength_unit antes de agrupar
+    # Resultado: "50 mg, 200 mcg" en vez de "50 / 200 mg / mcg" cuando las unidades difieren
+    df_ingredients['_dosaje'] = (
+        df_ingredients['strength'].fillna('').astype(str).str.strip() + ' ' +
+        df_ingredients['strength_unit'].fillna('').astype(str).str.strip()
+    ).str.strip()
+    df_ing_dosaje = (
+        df_ingredients
+        .groupby('drug_code')['_dosaje']
+        .apply(lambda x: ', '.join(v for v in dict.fromkeys(x) if v and v.lower() != 'nan'))
+        .reset_index()
+        .rename(columns={'_dosaje': 'strength'})
+    )
+
+    df_ing_grouped = df_ing_name.merge(df_ing_dosaje, on='drug_code')
     
     # Limpieza de duplicados
     df_atc_clean = df_atc.drop_duplicates(subset=['drug_code'])
@@ -78,7 +90,7 @@ def cargar_datos_canadamed():
         'company_name': df_filtered.get('company_name', 'N/A'),
         'class_name': df_filtered.get('class_name', 'N/A'),
         'strength': df_filtered.get('strength', 'N/A'),
-        'strength_unit': df_filtered.get('strength_unit', 'N/A'),
+        'strength_unit': 'N/A',
         'route_administration': df_filtered.get('route_of_administration_name', 'N/A'),
         'pharmaceutical_form': df_filtered.get('pharmaceutical_form_name', 'N/A'),
         'status': df_filtered.get('status', 'N/A')
