@@ -1,5 +1,8 @@
 package esei.uvigo.es.tfg_donakyoin.fragments
-
+import esei.uvigo.es.tfg_donakyoin.databinding.FragmentDetailBinding
+import esei.uvigo.es.tfg_donakyoin.models.MedicamentoDetalleDto
+import esei.uvigo.es.tfg_donakyoin.viewmodel.MedViewModel
+import esei.uvigo.es.tfg_donakyoin.*
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,13 +12,10 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.core.view.isVisible
 import com.google.android.material.chip.Chip
-import esei.uvigo.es.tfg_donakyoin.R
-import esei.uvigo.es.tfg_donakyoin.databinding.FragmentDetailBinding
-import esei.uvigo.es.tfg_donakyoin.models.MedicamentoDetalleDto
-import esei.uvigo.es.tfg_donakyoin.viewmodel.MedViewModel
 
 class DetailFragment : Fragment() {
 
@@ -52,6 +52,13 @@ class DetailFragment : Fragment() {
                 mostrarDetalles(detalle)
                 binding.scrollContent.visibility = View.VISIBLE
             }
+        }
+
+        // Botón de Equivalencias Farmacéuticas
+        binding.btnEquivalencias.setOnClickListener {
+            findNavController().navigate(
+                DetailFragmentDirections.actionDetailFragmentToEquivalenciasBottomSheet(args.idMed)
+            )
         }
     }
 

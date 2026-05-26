@@ -13,6 +13,20 @@ data class MedicamentoDto(
     val via_administracion: String? = null
 )
 
+// Modelo de Medicamento para Equivalencias -> Incluye dosaje para comparación en BottomSheet
+@JsonClass(generateAdapter = true)
+data class EquivalenciaResumenDto(
+    val id_med: Int,
+    val nom_comercial: String,
+    val laboratorio: String? = null,
+    val iso_code: String,
+    val nom_pais: String,
+    val forma_farmaceutica: String? = null,
+    val via_administracion: String? = null,
+    val dosaje: String? = null,
+    val tipo_equivalencia: String? = null
+)
+
 @JsonClass(generateAdapter = true)
 data class MedicamentoDetalleDto(
     val id_med: Int,

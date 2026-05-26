@@ -21,7 +21,25 @@
         <argument
             android:name="idMed"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_detailFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+        <action
+            android:id="@+id/action_detailFragment_to_equivalenciasBottomSheet"
+            app:destination="@id/equivalenciasBottomSheet" />
     </fragment>
+
+    <dialog
+        android:id="@+id/equivalenciasBottomSheet"
+        android:name="esei.uvigo.es.tfg_donakyoin.fragments.EquivalenciasBottomSheet"
+        android:label="Equivalencias">
+        <argument
+            android:name="idMed"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_equivalenciasBottomSheet_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </dialog>
 
     <fragment
         android:id="@+id/savedFragment"

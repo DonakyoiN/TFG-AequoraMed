@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Colores -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Color -->
+    <!-- Colores de Tema -->
     <color name="light_primary">#166B54</color>
     <color name="light_on_primary">#FFFFFF</color>
     <color name="light_primary_container">#A4F2D5</color>
