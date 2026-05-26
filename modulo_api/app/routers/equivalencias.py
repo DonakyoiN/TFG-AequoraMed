@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from psycopg2.extensions import connection
 from app.database import get_db
-from app.models.medicamento import MedicamentoResumen
+from app.models.medicamento import MedicamentoResumen, EquivalenciaResumen
 from app.models.equivalencia import EquivalenciaResponse
 
 # Definición de la ruta /equivalencias
@@ -16,7 +16,8 @@ _MED_SELECT = """
         m.id_med, m.nom_comercial, m.laboratorio,
         p.iso_code, p.nom_pais,
         ff.descripcion AS forma_farmaceutica,
-        va.descripcion AS via_administracion
+        va.descripcion AS via_administracion,
+        m.dosaje
     FROM med.medicamento m
     JOIN med.pais p ON m.id_pais = p.id_pais
     LEFT JOIN med.forma_farmaceutica ff ON m.id_forma = ff.id_forma
@@ -103,7 +104,7 @@ def equivalencias_por_medicamento(
             all_atc_rows = cur.fetchall()
             # ids_por_atc incluye TODOS los matches ATC para excluirlos correctamente de por_pa
             ids_por_atc = [row["id_med"] for row in all_atc_rows]
-            por_atc = [MedicamentoResumen(**row) for row in _limit_per_country(all_atc_rows, limit)]
+            por_atc = [EquivalenciaResumen(**row) for row in _limit_per_country(all_atc_rows, limit)]
 
         # --- Filtrado por Principio Activo {CL, PT} ---
         por_pa = []
@@ -127,7 +128,7 @@ def equivalencias_por_medicamento(
             sql_pa += " ORDER BY p.nom_pais, m.nom_comercial LIMIT %(cap)s"
             params_pa["cap"] = _SQL_CAP
             cur.execute(sql_pa, params_pa)
-            por_pa = [MedicamentoResumen(**row) for row in _limit_per_country(cur.fetchall(), limit)]
+            por_pa = [EquivalenciaResumen(**row) for row in _limit_per_country(cur.fetchall(), limit)]
 
     return EquivalenciaResponse(
         medicamento_origen=MedicamentoResumen(**origen),

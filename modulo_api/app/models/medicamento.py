@@ -12,6 +12,10 @@ class MedicamentoResumen(BaseModel):
     forma_farmaceutica: str | None
     via_administracion: str | None
 
+# Modelo de Medicamento para Equivalencias -> Para Bottom Sheet de Equivalencias en App
+class EquivalenciaResumen(MedicamentoResumen):
+    dosaje: str | None
+
 # Modelo de Medicamento con los Detalles -> Para Fragment Detail en App
 class MedicamentoDetalle(BaseModel):
     id_med: int

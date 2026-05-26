@@ -303,6 +303,15 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- Botón de Equivalencias -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_equivalencias"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Equivalencias Farmacéuticas" />
+
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>

@@ -42,9 +42,17 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     private val _detalle = MutableLiveData<MedicamentoDetalleDto?>()
     val detalle: LiveData<MedicamentoDetalleDto?> = _detalle
 
+    // Equivalencias de Medicamento
+    private val _equivalencias = MutableLiveData<EquivalenciaDto?>()
+    val equivalencias: LiveData<EquivalenciaDto?> = _equivalencias
+
     // Estado de Carga
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
+
+    // Estado de Carga - Equivalencias
+    private val _isLoadingEquiv = MutableLiveData(false)
+    val isLoadingEquiv: LiveData<Boolean> = _isLoadingEquiv
 
     // Error
     private val _error = MutableLiveData<String?>()
@@ -79,6 +87,18 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
                 .onSuccess { _medicamentos.value = it }
                 .onFailure { _error.value = it.message }
             _isLoading.value = false
+        }
+    }
+
+    // Carga de Equivalencias de un Medicamento
+    fun cargarEquivalencias(idMed: Int) {
+        viewModelScope.launch {
+            _equivalencias.value = null
+            _isLoadingEquiv.value = true
+            repository.getEquivalencias(idMed)
+                .onSuccess { _equivalencias.value = it }
+                .onFailure { _error.value = it.message }
+            _isLoadingEquiv.value = false
         }
     }
 
