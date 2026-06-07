@@ -56,6 +56,8 @@ class SearchFragment : Fragment() {
 
         // Búsqueda
         setupBusqueda()
+        // Filtros
+        setupFiltrado()
 
         // Observer de los Medicamentos por ViewModel
         viewModel.medicamentos.observe(viewLifecycleOwner) { meds ->
@@ -82,6 +84,16 @@ class SearchFragment : Fragment() {
                 binding.searchBar.setText(binding.searchView.text)
                 binding.searchView.hide()
                 buscar()
+                true
+            } else false
+        }
+    }
+
+    // Layout del filtrado
+    private fun setupFiltrado() {
+        binding.searchBar.setOnMenuItemClickListener { item ->
+            if (item.itemId == R.id.action_filter) {
+                findNavController().navigate(R.id.action_searchFragment_to_filterBottomSheet)
                 true
             } else false
         }

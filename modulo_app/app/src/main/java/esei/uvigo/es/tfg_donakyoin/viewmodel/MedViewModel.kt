@@ -71,19 +71,38 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    // Filtros de Búsqueda
+    var ultimaQuery: String = ""
+    var ultimoModo: String = "todo"
+    var paisesActivo: List<String> = emptyList()
+    var formaActiva: String? = null
+    var viaActiva: String? = null
+    var laboratorioActivo: String? = null
+
     // Búsqueda de Medicamentos
     fun buscarMedicamentos(
         q: String,
-        modo: String = "todo",
-        paises: List<String>? = null,
-        forma: String? = null,
-        via: String? = null,
-        laboratorio: String? = null
+        modo: String = "todo"
     ) {
+        ultimaQuery = q
+        ultimoModo = modo
+        busquedaFiltro()
+    }
+
+    // Búsqueda con Filtrado Avanzado
+    fun busquedaFiltro() {
+        if (ultimaQuery.isEmpty()) return
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
-            repository.buscarMedicamentos(q, modo, paises, forma, via, laboratorio)
+            repository.buscarMedicamentos(
+                ultimaQuery,
+                ultimoModo,
+                paisesActivo.takeIf { it.isNotEmpty() },
+                formaActiva,
+                viaActiva,
+                laboratorioActivo
+            )
                 .onSuccess { _medicamentos.value = it }
                 .onFailure { _error.value = it.message }
             _isLoading.value = false
