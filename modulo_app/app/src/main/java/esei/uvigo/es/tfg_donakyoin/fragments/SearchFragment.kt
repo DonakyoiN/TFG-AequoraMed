@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import android.view.inputmethod.EditorInfo
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 
@@ -20,7 +20,7 @@ class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     // ViewModel
-    private val viewModel: MedViewModel by viewModels()
+    private val viewModel: MedViewModel by activityViewModels()
     // Adapter
     private lateinit var adapter: MedAdapter
 
