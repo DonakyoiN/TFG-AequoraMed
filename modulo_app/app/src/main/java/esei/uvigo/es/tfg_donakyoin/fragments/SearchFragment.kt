@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.search.SearchView
 
 class SearchFragment : Fragment() {
 
@@ -75,8 +76,11 @@ class SearchFragment : Fragment() {
 
     // Layout de la búsqueda
     private fun setupBusqueda() {
-        binding.etBusqueda.setOnEditorActionListener { _, actionId, _ ->
+        binding.searchView.setupWithSearchBar(binding.searchBar)
+        binding.searchView.editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                binding.searchBar.setText(binding.searchView.text)
+                binding.searchView.hide()
                 buscar()
                 true
             } else false
@@ -85,7 +89,7 @@ class SearchFragment : Fragment() {
 
     // Búsqueda de Medicamentos
     private fun buscar() {
-        val q = binding.etBusqueda.text?.toString()?.trim() ?: return
+        val q = binding.searchBar.text?.toString()?.trim() ?: return
         if (q.isEmpty()) return
         viewModel.buscarMedicamentos(q = q, modo = getModoSeleccionado())
     }
