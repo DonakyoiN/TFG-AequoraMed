@@ -1,4 +1,5 @@
 package esei.uvigo.es.tfg_donakyoin.viewmodel
+import esei.uvigo.es.tfg_donakyoin.database.MedDb
 import esei.uvigo.es.tfg_donakyoin.models.*
 import esei.uvigo.es.tfg_donakyoin.network.RetrofitClient
 import esei.uvigo.es.tfg_donakyoin.repository.MedRepository
@@ -17,7 +18,8 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     // Inicializador de Repositorio y Filtros
     init {
         val api = RetrofitClient.apiService
-        repository = MedRepository(api)
+        val dao = MedDb.getInstance(app).medDao()
+        repository = MedRepository(api, dao)
         cargarFiltros()
     }
 
@@ -58,6 +60,14 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
+    // Medicamentos Guardados
+    private val _medicamentosGuardados = MutableLiveData<List<MedicamentoDto>>()
+    val medicamentosGuardados: LiveData<List<MedicamentoDto>> = _medicamentosGuardados
+
+    // Estado de Guardado
+    private val _isSaved = MutableLiveData(false)
+    val isSaved: LiveData<Boolean> = _isSaved
+
     // Mostrar Detalles del Medicamento
     fun cargarDetalle(idMed: Int) {
         viewModelScope.launch {
@@ -66,8 +76,54 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
             _error.value = null
             repository.getDetalleMedicamento(idMed)
                 .onSuccess { _detalle.value = it }
-                .onFailure { _error.value = it.message }
+                .onFailure {
+                    val local = repository.getDetalleGuardado(idMed)
+                    if (local != null) _detalle.value = local
+                    else _error.value = it.message
+                }
             _isLoading.value = false
+        }
+    }
+
+    // Comprobar si el Medicamento está Guardado
+    fun checkSaved(idMed: Int) {
+        viewModelScope.launch {
+            _isSaved.value = repository.isMedSaved(idMed)
+        }
+    }
+
+    // Guardar Medicamento en Local
+    fun guardarMed() {
+        val detalle = _detalle.value ?: return
+        viewModelScope.launch {
+            val med = MedicamentoDto(
+                id_med = detalle.id_med,
+                nom_comercial = detalle.nom_comercial,
+                laboratorio = detalle.laboratorio,
+                iso_code = detalle.iso_code,
+                nom_pais = detalle.nom_pais,
+                forma_farmaceutica = detalle.forma_farmaceutica,
+                via_administracion = detalle.via_administracion
+            )
+            repository.guardarMedicamento(med, detalle)
+            _isSaved.value = true
+            cargarGuardados()
+        }
+    }
+
+    // Eliminar Medicamento de Local
+    fun eliminarMed(idMed: Int) {
+        viewModelScope.launch {
+            repository.eliminarMedicamento(idMed)
+            _isSaved.value = false
+            cargarGuardados()
+        }
+    }
+
+    // Cargar Medicamentos Guardados
+    fun cargarGuardados() {
+        viewModelScope.launch {
+            _medicamentosGuardados.value = repository.getMedGuardado()
         }
     }
 
