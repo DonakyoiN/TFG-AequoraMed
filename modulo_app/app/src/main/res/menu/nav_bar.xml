@@ -4,7 +4,7 @@
         android:icon="@drawable/ic_search_icon"
         android:title="Búsqueda" />
     <item android:id="@+id/savedFragment"
-        android:icon="@drawable/ic_bookmark_icon"
+        android:icon="@drawable/ic_bookmark_saved"
         android:title="Guardados" />
     <item android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_settings_icon"

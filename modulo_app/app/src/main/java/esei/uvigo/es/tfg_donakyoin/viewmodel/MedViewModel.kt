@@ -85,6 +85,16 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    // Cargar Detalle desde Local
+    fun cargarDetalleLocal(idMed: Int) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val local = repository.getDetalleGuardado(idMed)
+            if (local != null) _detalle.value = local
+            _isLoading.value = false
+        }
+    }
+
     // Comprobar si el Medicamento está Guardado
     fun checkSaved(idMed: Int) {
         viewModelScope.launch {

@@ -307,17 +307,6 @@
 
         </androidx.core.widget.NestedScrollView>
 
-        <!-- FAB para Equivalencias Farmacéuticas -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_equivalencias"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_equivalencia"
-            android:contentDescription="Equivalencias"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
