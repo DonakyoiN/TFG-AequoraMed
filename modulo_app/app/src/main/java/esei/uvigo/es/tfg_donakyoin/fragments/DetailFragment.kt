@@ -17,6 +17,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.core.view.isVisible
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.Snackbar
 import esei.uvigo.es.tfg_donakyoin.utils.*
 
 class DetailFragment : Fragment() {
@@ -86,8 +87,13 @@ class DetailFragment : Fragment() {
         toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_guardar -> {
-                    if (viewModel.isSaved.value == true) viewModel.eliminarMed(args.idMed)
-                    else viewModel.guardarMed()
+                    if (viewModel.isSaved.value == true) {
+                        viewModel.eliminarMed(args.idMed)
+                        Snackbar.make(binding.root, "Medicamento eliminado de guardados", Snackbar.LENGTH_SHORT).show()
+                    } else {
+                        viewModel.guardarMed()
+                        Snackbar.make(binding.root, "Medicamento guardado", Snackbar.LENGTH_SHORT).show()
+                    }
                     true
                 }
                 else -> false
