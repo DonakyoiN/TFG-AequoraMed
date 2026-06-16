@@ -4,14 +4,16 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/searchFragment">
 
-    <!-- TODO: Asignar un nombre a la Aplicación -->
     <fragment
         android:id="@+id/searchFragment"
         android:name="esei.uvigo.es.tfg_donakyoin.fragments.SearchFragment"
-        android:label="ProjectMed">
+        android:label="AequoraMed">
         <action
             android:id="@+id/action_searchFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_filterBottomSheet"
+            app:destination="@id/filterBottomSheet" />
     </fragment>
 
     <fragment
@@ -32,7 +34,7 @@
     <dialog
         android:id="@+id/equivalenciasBottomSheet"
         android:name="esei.uvigo.es.tfg_donakyoin.fragments.EquivalenciasBottomSheet"
-        android:label="Equivalencias">
+        android:label="Equivalencias Farmacéuticas">
         <argument
             android:name="idMed"
             app:argType="integer" />
@@ -41,15 +43,33 @@
             app:destination="@id/detailFragment" />
     </dialog>
 
+    <dialog
+        android:id="@+id/filterBottomSheet"
+        android:name="esei.uvigo.es.tfg_donakyoin.fragments.FilterBottomSheet"
+        android:label="Filtros de Búsqueda" />
+
     <fragment
         android:id="@+id/savedFragment"
         android:name="esei.uvigo.es.tfg_donakyoin.fragments.SavedFragment"
-        android:label="ProjectMed" />
+        android:label="AequoraMed">
+        <action
+            android:id="@+id/action_savedFragment_to_localDetailFragment"
+            app:destination="@id/localDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/localDetailFragment"
+        android:name="esei.uvigo.es.tfg_donakyoin.fragments.LocalDetailFragment"
+        android:label="Información">
+        <argument
+            android:name="idMed"
+            app:argType="integer" />
+    </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="esei.uvigo.es.tfg_donakyoin.fragments.SettingsFragment"
-        android:label="ProjectMed" />
+        android:label="AequoraMed" />
 
 
 </navigation>

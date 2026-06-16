@@ -15,82 +15,20 @@
         android:layout_height="match_parent"
         android:background="?attr/colorSurface">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_busqueda"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        <!-- SearchBar de Búsqueda -->
+        <com.google.android.material.search.SearchBar
+            android:id="@+id/search_bar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
             android:hint="Buscar medicamento..."
-            app:endIconMode="clear_text"
-            app:startIconDrawable="@drawable/ic_search_icon"
+            app:menu="@menu/search_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_busqueda"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <HorizontalScrollView
-            android:id="@+id/hsv_modos"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingHorizontal="16dp"
-            android:scrollbars="none"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_busqueda">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_modo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_todo"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Todo" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_nombre"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Nombre" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_atc"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Código ATC" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_principio_activo"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Principio Activo" />
-
-            </com.google.android.material.chip.ChipGroup>
-
-        </HorizontalScrollView>
-
+        <!-- RecyclerView de Resultados -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_medicamentos"
             android:layout_width="0dp"
@@ -102,7 +40,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hsv_modos"
+            app:layout_constraintTop_toBottomOf="@id/search_bar"
             tools:listitem="@layout/item_medicamento"
             tools:visibility="visible" />
 
@@ -114,7 +52,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hsv_modos"
+            app:layout_constraintTop_toBottomOf="@id/search_bar"
             tools:visibility="gone" />
 
         <TextView
@@ -130,9 +68,100 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hsv_modos"
+            app:layout_constraintTop_toBottomOf="@id/search_bar"
             tools:text="Busca un medicamento para ver resultados"
             tools:visibility="visible" />
+
+        <!-- SearchView con Modos de búsqueda y Búsquedas Recientes -->
+        <com.google.android.material.search.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Buscar medicamento...">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- ScrollView Horizontal + ChipGroup de Modos de búsqueda principales -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="4dp"
+                    android:scrollbars="none">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chip_group_modo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:selectionRequired="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_todo"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Todo" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_nombre"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nombre" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_atc"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Código ATC" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_principio_activo"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Principio Activo" />
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                </HorizontalScrollView>
+
+                <!-- Sección de Búsquedas Recientes -->
+                <LinearLayout
+                    android:id="@+id/ll_recientes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="4dp"
+                        android:text="Búsquedas recientes"
+                        android:textAppearance="?attr/textAppearanceLabelMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_recientes_items"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.search.SearchView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

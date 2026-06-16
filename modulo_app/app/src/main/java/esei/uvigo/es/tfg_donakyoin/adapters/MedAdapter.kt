@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import esei.uvigo.es.tfg_donakyoin.R
 import esei.uvigo.es.tfg_donakyoin.databinding.ItemMedicamentoBinding
 import esei.uvigo.es.tfg_donakyoin.models.MedicamentoDto
+import esei.uvigo.es.tfg_donakyoin.utils.*
 
 class MedAdapter(
     private val onClickListener: (MedicamentoDto) -> Unit
@@ -31,15 +32,6 @@ class MedAdapter(
             binding.executePendingBindings()
         }
 
-        // Asignación de Banderas según ISO
-        private fun flagResFor(isoCode: String): Int? = when (isoCode.uppercase()) {
-            "ES" -> R.drawable.ic_spain
-            "CL" -> R.drawable.ic_chile
-            "PT" -> R.drawable.ic_portugal
-            "US" -> R.drawable.ic_usa
-            "CA" -> R.drawable.ic_canada
-            else -> null
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MedViewHolder {

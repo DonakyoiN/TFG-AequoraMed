@@ -8,7 +8,7 @@ from app.database import get_db
 
 # Definición de la API
 app = FastAPI(
-    title="ProjectMed API",
+    title="AequoraMed API",
     description="API para la Aplicación de consultas de equivalencias farmacéuticas Internacional",
     version="1.0.0"
 )
