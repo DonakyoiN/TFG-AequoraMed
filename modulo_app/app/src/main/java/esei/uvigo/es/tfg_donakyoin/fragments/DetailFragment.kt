@@ -5,17 +5,21 @@ import esei.uvigo.es.tfg_donakyoin.viewmodel.MedViewModel
 import esei.uvigo.es.tfg_donakyoin.*
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.core.view.isVisible
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import esei.uvigo.es.tfg_donakyoin.utils.*
@@ -71,33 +75,40 @@ class DetailFragment : Fragment() {
 
     // Menú de Guardado
     private fun setupToolbar() {
-        val toolbar = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
-        toolbar.inflateMenu(R.menu.detail_bar)
-
-        val itemGuardar = toolbar.menu.findItem(R.id.action_guardar)
-
-        // Verifica estado de Guardado para mostrar un ícono u otro
-        viewModel.isSaved.observe(viewLifecycleOwner) { saved ->
-            itemGuardar.setIcon(
-                if (saved) R.drawable.ic_bookmark_saved else R.drawable.ic_bookmark_icon
-            )
-        }
-
-        // Acción del Menú
-        toolbar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.action_guardar -> {
-                    if (viewModel.isSaved.value == true) {
-                        viewModel.eliminarMed(args.idMed)
-                        Snackbar.make(binding.root, "Medicamento eliminado de guardados", Snackbar.LENGTH_SHORT).show()
-                    } else {
-                        viewModel.guardarMed()
-                        Snackbar.make(binding.root, "Medicamento guardado", Snackbar.LENGTH_SHORT).show()
-                    }
-                    true
-                }
-                else -> false
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.detail_bar, menu)
             }
+
+            // Maneja estado de Guardado
+            override fun onPrepareMenu(menu: Menu) {
+                val saved = viewModel.isSaved.value == true
+                menu.findItem(R.id.action_guardar)?.setIcon(
+                    if (saved) R.drawable.ic_bookmark_saved else R.drawable.ic_bookmark_icon
+                )
+            }
+
+            // Acción del Menú
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_guardar -> {
+                        if (viewModel.isSaved.value == true) {
+                            viewModel.eliminarMed(args.idMed)
+                            Snackbar.make(binding.root, "Medicamento eliminado de guardados", Snackbar.LENGTH_SHORT).show()
+                        } else {
+                            viewModel.guardarMed()
+                            Snackbar.make(binding.root, "Medicamento guardado", Snackbar.LENGTH_SHORT).show()
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        // Observer del estado de Guardado
+        viewModel.isSaved.observe(viewLifecycleOwner) {
+            requireActivity().invalidateMenu()
         }
     }
 
@@ -162,7 +173,6 @@ class DetailFragment : Fragment() {
     // onDestroyView para limpieza de Vista
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().findViewById<MaterialToolbar>(R.id.toolbar).menu.clear()
         _binding = null
     }
 }
