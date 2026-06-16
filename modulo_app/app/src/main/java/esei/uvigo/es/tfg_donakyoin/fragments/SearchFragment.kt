@@ -3,13 +3,17 @@ import esei.uvigo.es.tfg_donakyoin.adapters.MedAdapter
 import esei.uvigo.es.tfg_donakyoin.databinding.FragmentSearchBinding
 import esei.uvigo.es.tfg_donakyoin.viewmodel.*
 import esei.uvigo.es.tfg_donakyoin.*
+import esei.uvigo.es.tfg_donakyoin.utils.RecentSearchManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import android.view.inputmethod.EditorInfo
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +28,8 @@ class SearchFragment : Fragment() {
     private val viewModel: MedViewModel by activityViewModels()
     // Adapter
     private lateinit var adapter: MedAdapter
+    // Búsquedas Recientes
+    private lateinit var recentSearches: RecentSearchManager
 
     // onCreateView para SearchFragment
     override fun onCreateView(
@@ -38,6 +44,9 @@ class SearchFragment : Fragment() {
     // onViewCreated para el binding del RecyclerView
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Inicialización de Búsquedas Recientes
+        recentSearches = RecentSearchManager(requireContext())
 
         // Inicialización de Adapter
         adapter = MedAdapter { med ->
@@ -58,6 +67,8 @@ class SearchFragment : Fragment() {
         setupBusqueda()
         // Filtros
         setupFiltrado()
+        // Búsquedas Recientes
+        setupBusquedasRecientes()
 
         // Observer de los Medicamentos por ViewModel
         viewModel.medicamentos.observe(viewLifecycleOwner) { meds ->
@@ -99,10 +110,42 @@ class SearchFragment : Fragment() {
         }
     }
 
+    // Búsquedas Recientes
+    private fun setupBusquedasRecientes() {
+        binding.searchView.addTransitionListener { _, _, newState ->
+            if (newState == SearchView.TransitionState.SHOWN) {
+                refreshBusquedasRecientes()
+            }
+        }
+    }
+
+    // Reconstruye la lista de búsquedas recientes
+    private fun refreshBusquedasRecientes() {
+        val searches = recentSearches.getSearches()
+        binding.llRecientes.isVisible = searches.isNotEmpty()
+        binding.llRecientesItems.removeAllViews()
+        searches.forEach { query ->
+            val item = layoutInflater.inflate(R.layout.item_recent_search, binding.llRecientesItems, false)
+            item.findViewById<TextView>(R.id.tv_query).text = query
+            item.setOnClickListener {
+                binding.searchBar.setText(query)
+                binding.searchView.hide()
+                recentSearches.addSearch(query)
+                viewModel.buscarMedicamentos(q = query, modo = getModoSeleccionado())
+            }
+            item.findViewById<ImageView>(R.id.btn_eliminar).setOnClickListener {
+                recentSearches.removeSearch(query)
+                refreshBusquedasRecientes()
+            }
+            binding.llRecientesItems.addView(item)
+        }
+    }
+
     // Búsqueda de Medicamentos
     private fun buscar() {
         val q = binding.searchBar.text?.toString()?.trim() ?: return
         if (q.isEmpty()) return
+        recentSearches.addSearch(q)
         viewModel.buscarMedicamentos(q = q, modo = getModoSeleccionado())
     }
 

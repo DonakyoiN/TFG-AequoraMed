@@ -72,61 +72,94 @@
             tools:text="Busca un medicamento para ver resultados"
             tools:visibility="visible" />
 
-        <!-- SearchView con Modos de búsqueda -->
+        <!-- SearchView con Modos de búsqueda y Búsquedas Recientes -->
         <com.google.android.material.search.SearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="Buscar medicamento...">
 
-            <!-- ScrollView Horizontal + ChipGroup de Modos de búsqueda principales -->
-            <HorizontalScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="4dp"
-                android:scrollbars="none">
+                android:orientation="vertical">
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chip_group_modo"
-                    android:layout_width="wrap_content"
+                <!-- ScrollView Horizontal + ChipGroup de Modos de búsqueda principales -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:selectionRequired="true"
-                    app:singleSelection="true">
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="4dp"
+                    android:scrollbars="none">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_todo"
-                        style="@style/Widget.Material3.Chip.Filter"
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chip_group_modo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:text="Todo" />
+                        app:selectionRequired="true"
+                        app:singleSelection="true">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_nombre"
-                        style="@style/Widget.Material3.Chip.Filter"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_todo"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Todo" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_nombre"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nombre" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_atc"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Código ATC" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_principio_activo"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Principio Activo" />
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                </HorizontalScrollView>
+
+                <!-- Sección de Búsquedas Recientes -->
+                <LinearLayout
+                    android:id="@+id/ll_recientes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp"
+                    android:visibility="gone">
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nombre" />
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="4dp"
+                        android:text="Búsquedas recientes"
+                        android:textAppearance="?attr/textAppearanceLabelMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_atc"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/ll_recientes_items"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Código ATC" />
+                        android:orientation="vertical" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_principio_activo"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Principio Activo" />
+                </LinearLayout>
 
-                </com.google.android.material.chip.ChipGroup>
-
-            </HorizontalScrollView>
+            </LinearLayout>
 
         </com.google.android.material.search.SearchView>
 
