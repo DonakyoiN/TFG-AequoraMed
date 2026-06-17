@@ -81,10 +81,39 @@ def equivalencias_por_medicamento(
         )
         pa_ids = [row["id_pa"] for row in cur.fetchall()]
 
-        # --- Filtrado por Código ATC {ES, CA, US} ---
+        # ATCs inferidos via asociado_con - Para Chile y Portugal
+        # Solo se aceptan ATCs que tengan al menos un med monocomponente con ese PA,
+        # para evitar arrastrar ATCs de combos (e.g. M01AE51 ibuprofen+codeine).
+        if pa_ids:
+            cur.execute(
+                """
+                SELECT DISTINCT ac.id_atc
+                FROM med.asociado_con ac
+                WHERE ac.id_pa = ANY(%s)
+                AND ac.id_atc IN (
+                    SELECT i.id_atc
+                    FROM med.identificado_por i
+                    WHERE i.id_med IN (
+                        SELECT id_med FROM med.contiene
+                        GROUP BY id_med HAVING COUNT(*) = 1
+                    )
+                    AND i.id_med IN (
+                        SELECT id_med FROM med.contiene WHERE id_pa = ANY(%s)
+                    )
+                )
+                """,
+                (pa_ids, pa_ids),
+            )
+            pa_derived_atcs = [r["id_atc"] for r in cur.fetchall() if r["id_atc"] not in atc_ids]
+        else:
+            pa_derived_atcs = []
+
+        all_atc_ids = atc_ids + pa_derived_atcs
+
+        # --- Filtrado por Código ATC (directo {ES, CA, US} + inferido via PA {CL, PT}) ---
         por_atc = []
         ids_por_atc = []
-        if atc_ids:
+        if all_atc_ids:
             sql_atc = (
                 _MED_SELECT
                 + """
@@ -94,14 +123,18 @@ def equivalencias_por_medicamento(
                   AND m.id_med != %(id_med)s
                 """
             )
-            params_atc: dict = {"atc_ids": atc_ids, "iso_origen": iso_origen, "id_med": id_med}
+            
+            params_atc: dict = {"atc_ids": all_atc_ids, "iso_origen": iso_origen, "id_med": id_med}
+
             if pais:
                 sql_atc += " AND p.iso_code = ANY(%(pais)s)"
                 params_atc["pais"] = [p.upper() for p in pais]
+
             sql_atc += " ORDER BY p.nom_pais, m.nom_comercial LIMIT %(cap)s"
             params_atc["cap"] = _SQL_CAP
             cur.execute(sql_atc, params_atc)
             all_atc_rows = cur.fetchall()
+
             # ids_por_atc incluye TODOS los matches ATC para excluirlos correctamente de por_pa
             ids_por_atc = [row["id_med"] for row in all_atc_rows]
             por_atc = [EquivalenciaResumen(**row) for row in _limit_per_country(all_atc_rows, limit)]
@@ -118,13 +151,17 @@ def equivalencias_por_medicamento(
                   AND m.id_med != %(id_med)s
                 """
             )
+
             params_pa: dict = {"pa_ids": pa_ids, "iso_origen": iso_origen, "id_med": id_med}
+
             if ids_por_atc:
                 sql_pa += " AND m.id_med != ALL(%(ids_por_atc)s)"
                 params_pa["ids_por_atc"] = ids_por_atc
+
             if pais:
                 sql_pa += " AND p.iso_code = ANY(%(pais)s)"
                 params_pa["pais"] = [p.upper() for p in pais]
+
             sql_pa += " ORDER BY p.nom_pais, m.nom_comercial LIMIT %(cap)s"
             params_pa["cap"] = _SQL_CAP
             cur.execute(sql_pa, params_pa)
