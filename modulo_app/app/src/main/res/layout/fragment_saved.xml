@@ -18,7 +18,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
-            android:text="Medicamentos Guardados"
+            android:text="@string/saved_titulo"
             android:textAllCaps="true"
             android:textAppearance="?attr/textAppearanceTitleSmall"
             android:textColor="@color/white"

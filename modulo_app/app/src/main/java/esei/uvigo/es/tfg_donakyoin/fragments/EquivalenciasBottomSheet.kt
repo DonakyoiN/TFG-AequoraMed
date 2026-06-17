@@ -4,6 +4,7 @@ import esei.uvigo.es.tfg_donakyoin.databinding.BottomSheetEquivalenciasBinding
 import esei.uvigo.es.tfg_donakyoin.models.EquivalenciaResumenDto
 import esei.uvigo.es.tfg_donakyoin.viewmodel.*
 import esei.uvigo.es.tfg_donakyoin.*
+import esei.uvigo.es.tfg_donakyoin.utils.paisResIdFor
 import android.os.Bundle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import android.view.LayoutInflater
@@ -59,10 +60,10 @@ class EquivalenciasBottomSheet : BottomSheetDialogFragment() {
         // Observer de Equivalencias
         viewModel.equivalencias.observe(viewLifecycleOwner) { equiv ->
             if (equiv == null) return@observe
-            val todos = equiv.por_atc.map { it.copy(tipo_equivalencia = "Equivalencia por ATC") } +
-                        equiv.por_principio_activo.map { it.copy(tipo_equivalencia = "Equivalencia por Principio Activo") }
+            val todos = equiv.por_atc.map { it.copy(tipo_equivalencia = getString(R.string.equiv_tipo_atc)) } +
+                        equiv.por_principio_activo.map { it.copy(tipo_equivalencia = getString(R.string.equiv_tipo_principio)) }
             if (todos.isEmpty()) {
-                binding.tvEmpty.text = "No se encontraron equivalencias"
+                binding.tvEmpty.text = getString(R.string.equiv_vacio)
                 binding.tvEmpty.isVisible = true
                 binding.rvEquivalencias.isVisible = false
             } else {
@@ -74,7 +75,7 @@ class EquivalenciasBottomSheet : BottomSheetDialogFragment() {
 
     // Configuración de Chips de Países
     private fun configurarChips(lista: List<EquivalenciaResumenDto>) {
-        val paises = lista.map { it.iso_code to it.nom_pais }.distinctBy { it.first }
+        val paises = lista.map { it.iso_code to (paisResIdFor(it.iso_code)?.let { id -> getString(id) } ?: it.nom_pais) }.distinctBy { it.first }
         binding.chipGroupPaises.removeAllViews()
 
         paises.forEach { (iso, nombre) ->
@@ -101,20 +102,20 @@ class EquivalenciasBottomSheet : BottomSheetDialogFragment() {
         }
 
         val todos = viewModel.equivalencias.value?.let {
-            it.por_atc.map { med -> med.copy(tipo_equivalencia = "Equivalencia por ATC") } +
-            it.por_principio_activo.map { med -> med.copy(tipo_equivalencia = "Equivalencia por Principio Activo") }
+            it.por_atc.map { med -> med.copy(tipo_equivalencia = getString(R.string.equiv_tipo_atc)) } +
+            it.por_principio_activo.map { med -> med.copy(tipo_equivalencia = getString(R.string.equiv_tipo_principio)) }
         } ?: return
 
         val filtrados = todos.filter { it.iso_code in seleccionados }
-        binding.tvEmpty.text = "No se encontraron equivalencias"
+        binding.tvEmpty.text = getString(R.string.equiv_vacio)
         binding.tvEmpty.isVisible = filtrados.isEmpty()
         binding.rvEquivalencias.isVisible = filtrados.isNotEmpty()
         adapter.submitList(filtrados)
     }
 
-    // Estado inicial: ningún país seleccionado
+    // Estado inicial: Ningún país seleccionado
     private fun mostrarSeleccionPais() {
-        binding.tvEmpty.text = "Selecciona un país para ver las equivalencias disponibles"
+        binding.tvEmpty.text = getString(R.string.equiv_selecciona_pais)
         binding.tvEmpty.isVisible = true
         binding.rvEquivalencias.isVisible = false
         adapter.submitList(emptyList())

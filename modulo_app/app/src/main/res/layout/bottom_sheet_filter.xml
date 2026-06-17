@@ -24,7 +24,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Filtros de Búsqueda"
+                android:text="@string/filter_titulo"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
@@ -34,7 +34,7 @@
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Limpiar" />
+                android:text="@string/filter_limpiar" />
 
         </LinearLayout>
 
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="8dp"
-            android:text="País"
+            android:text="@string/filter_pais"
             android:textAppearance="?attr/textAppearanceLabelLarge"
             android:textColor="?attr/colorOnSurface" />
 
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="12dp"
-            android:hint="Forma Farmacéutica">
+            android:hint="@string/filter_forma">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_forma"
@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="12dp"
-            android:hint="Vía de Administración">
+            android:hint="@string/filter_via">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_via"
@@ -108,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="20dp"
-            android:hint="Laboratorio">
+            android:hint="@string/filter_laboratorio">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_laboratorio"
@@ -126,7 +126,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:text="Aplicar filtros" />
+            android:text="@string/filter_aplicar" />
 
     </LinearLayout>
 

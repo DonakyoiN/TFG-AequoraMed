@@ -54,7 +54,7 @@ class SavedFragment : Fragment() {
         viewModel.cargarGuardados()
 
         viewModel.medicamentosGuardados.observe(viewLifecycleOwner) { meds ->
-            if (meds.isEmpty()) mostrarEstado("No tienes medicamentos guardados")
+            if (meds.isEmpty()) mostrarEstado(getString(R.string.saved_vacio))
             else {
                 adapter.submitList(meds)
                 mostrarLista()
@@ -91,7 +91,7 @@ class SavedFragment : Fragment() {
                 val position = viewHolder.bindingAdapterPosition
                 val med = adapter.currentList.getOrNull(position) ?: return
                 viewModel.eliminarMed(med.id_med)
-                Snackbar.make(binding.rvGuardados, "Medicamento eliminado de guardados", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.rvGuardados, getString(R.string.snack_eliminado), Snackbar.LENGTH_SHORT).show()
             }
 
             // Limpia posición al soltar

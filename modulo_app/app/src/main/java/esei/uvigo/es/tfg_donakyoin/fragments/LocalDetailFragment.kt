@@ -62,8 +62,10 @@ class LocalDetailFragment : Fragment() {
 
         // Registro: Ocultar si es Portugal
         binding.rowRegPais.isVisible = detalle.iso_code != "PT"
-        binding.textLabelRegPais.text = registroLabelFor(detalle.iso_code)
+        binding.textLabelRegPais.text = getString(registroResIdFor(detalle.iso_code))
         binding.textRegPais.text = detalle.reg_pais
+        val paisResId = paisResIdFor(detalle.iso_code)
+        if (paisResId != null) binding.textNomPais.text = getString(paisResId)
 
         // Dosaje: Ocultar si es null
         binding.rowDosaje.isVisible = detalle.dosaje != null

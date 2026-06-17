@@ -73,7 +73,7 @@ class SearchFragment : Fragment() {
         // Observer de los Medicamentos por ViewModel
         viewModel.medicamentos.observe(viewLifecycleOwner) { meds ->
             adapter.submitList(meds)
-            if (meds.isEmpty()) mostrarEstado("Sin resultados")
+            if (meds.isEmpty()) mostrarEstado(getString(R.string.search_no_results))
             else mostrarLista()
         }
 
@@ -83,7 +83,7 @@ class SearchFragment : Fragment() {
         }
 
         if (viewModel.medicamentos.value == null) {
-            mostrarEstado("Busca un medicamento para ver resultados")
+            mostrarEstado(getString(R.string.search_placeholder))
         }
     }
 

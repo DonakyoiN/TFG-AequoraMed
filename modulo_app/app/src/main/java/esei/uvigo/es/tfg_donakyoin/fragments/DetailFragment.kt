@@ -94,10 +94,10 @@ class DetailFragment : Fragment() {
                     R.id.action_guardar -> {
                         if (viewModel.isSaved.value == true) {
                             viewModel.eliminarMed(args.idMed)
-                            Snackbar.make(binding.root, "Medicamento eliminado de guardados", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(binding.root, getString(R.string.snack_eliminado), Snackbar.LENGTH_SHORT).show()
                         } else {
                             viewModel.guardarMed()
-                            Snackbar.make(binding.root, "Medicamento guardado", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(binding.root, getString(R.string.snack_guardado), Snackbar.LENGTH_SHORT).show()
                         }
                         true
                     }
@@ -119,8 +119,10 @@ class DetailFragment : Fragment() {
 
         // Registro: Ocultar si es Portugal (id_pt != registro)
         binding.rowRegPais.isVisible = detalle.iso_code != "PT"
-        binding.textLabelRegPais.text = registroLabelFor(detalle.iso_code)
+        binding.textLabelRegPais.text = getString(registroResIdFor(detalle.iso_code))
         binding.textRegPais.text = detalle.reg_pais
+        val paisResId = paisResIdFor(detalle.iso_code)
+        if (paisResId != null) binding.textNomPais.text = getString(paisResId)
 
         // Dosaje: Ocultar si es null (CL + algunos med sin dosis)
         binding.rowDosaje.isVisible = detalle.dosaje != null

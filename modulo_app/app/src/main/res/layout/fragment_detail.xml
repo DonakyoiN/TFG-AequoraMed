@@ -114,7 +114,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Laboratorio"
+                                    android:text="@string/detalle_laboratorio"
                                     android:textAppearance="?attr/textAppearanceLabelSmall"
                                     android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -151,14 +151,14 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="País"
+                                        android:text="@string/detalle_pais"
                                         android:textAppearance="?attr/textAppearanceLabelSmall"
                                         android:textColor="?attr/colorOnSurfaceVariant" />
 
                                     <TextView
+                                        android:id="@+id/text_nom_pais"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@{detalle.nom_pais}"
                                         android:textAppearance="?attr/textAppearanceBodyMedium"
                                         android:textColor="?attr/colorOnSurface" />
 
@@ -178,7 +178,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Forma farmacéutica"
+                                    android:text="@string/detalle_forma"
                                     android:textAppearance="?attr/textAppearanceLabelSmall"
                                     android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -202,7 +202,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Vía de administración"
+                                    android:text="@string/detalle_via"
                                     android:textAppearance="?attr/textAppearanceLabelSmall"
                                     android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -227,7 +227,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Dosajes disponibles"
+                                    android:text="@string/detalle_dosaje"
                                     android:textAppearance="?attr/textAppearanceLabelSmall"
                                     android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -262,7 +262,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="8dp"
-                                android:text="Código ATC"
+                                android:text="@string/detalle_atc"
                                 android:textAppearance="?attr/textAppearanceLabelSmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -294,7 +294,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="8dp"
-                                android:text="Principios Activos"
+                                android:text="@string/detalle_principios"
                                 android:textAppearance="?attr/textAppearanceLabelSmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -320,7 +320,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:src="@drawable/ic_equivalencia"
-            android:contentDescription="Equivalencias"
+            android:contentDescription="@string/detalle_equivalencias_cd"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

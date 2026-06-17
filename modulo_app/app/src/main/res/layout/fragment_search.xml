@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            android:hint="Buscar medicamento..."
+            android:hint="@string/search_hint"
             app:menu="@menu/search_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -77,7 +77,7 @@
             android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Buscar medicamento...">
+            android:hint="@string/search_hint">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -106,28 +106,28 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="Todo" />
+                            android:text="@string/search_modo_todo" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_nombre"
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Nombre" />
+                            android:text="@string/search_modo_nombre" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_atc"
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Código ATC" />
+                            android:text="@string/search_modo_atc" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_principio_activo"
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Principio Activo" />
+                            android:text="@string/search_modo_principio" />
 
                     </com.google.android.material.chip.ChipGroup>
 
@@ -147,7 +147,7 @@
                         android:layout_height="wrap_content"
                         android:paddingHorizontal="16dp"
                         android:paddingBottom="4dp"
-                        android:text="Búsquedas recientes"
+                        android:text="@string/search_recent"
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 

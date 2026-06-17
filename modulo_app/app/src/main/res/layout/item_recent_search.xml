@@ -34,6 +34,6 @@
         android:clickable="true"
         android:focusable="true"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Eliminar búsqueda" />
+        android:contentDescription="@string/search_eliminar_cd" />
 
 </LinearLayout>
