@@ -82,9 +82,9 @@ def equivalencias_por_medicamento(
         pa_ids = [row["id_pa"] for row in cur.fetchall()]
 
         # ATCs inferidos via asociado_con - Para Chile y Portugal
-        # Solo se aceptan ATCs que tengan al menos un med monocomponente con ese PA,
-        # para evitar arrastrar ATCs de combos (e.g. M01AE51 ibuprofen+codeine).
-        if pa_ids:
+        # Solo se aplica si el origen es monocomponente (1 PA) y se aceptan únicamente
+        # ATCs de meds monocomponente destino, para evitar ruido de combos.
+        if pa_ids and len(pa_ids) == 1:
             cur.execute(
                 """
                 SELECT DISTINCT ac.id_atc
