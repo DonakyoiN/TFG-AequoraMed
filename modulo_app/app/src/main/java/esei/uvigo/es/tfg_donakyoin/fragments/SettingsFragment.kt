@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
@@ -48,11 +47,7 @@ class SettingsFragment : Fragment() {
         binding.switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
             if (isRelaunching) return@setOnCheckedChangeListener
             prefs.setDarkMode(isChecked)
-            relaunchWithOverlay {
-                AppCompatDelegate.setDefaultNightMode(
-                    if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-                )
-            }
+            relaunchWithOverlay()
         }
 
         // Cambio de Idioma
@@ -66,7 +61,7 @@ class SettingsFragment : Fragment() {
     }
 
     // Muestra overlay de carga y relanza MainActivity con el cambio aplicado
-    private fun relaunchWithOverlay(applyBeforeLaunch: (() -> Unit)? = null) {
+    private fun relaunchWithOverlay() {
         isRelaunching = true
         val activity = requireActivity()
         val rootView = activity.window.decorView as ViewGroup
@@ -98,9 +93,9 @@ class SettingsFragment : Fragment() {
             .alpha(1f)
             .setDuration(200)
             .withEndAction {
-                applyBeforeLaunch?.invoke()
                 val intent = Intent(activity, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    putExtra("navigate_to_settings", true)
                 }
                 activity.startActivity(intent)
                 @Suppress("DEPRECATION")

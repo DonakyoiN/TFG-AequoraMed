@@ -5,6 +5,7 @@ import android.os.Bundle
 import esei.uvigo.es.tfg_donakyoin.utils.PrefsManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import java.util.Locale
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -22,9 +23,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     override fun attachBaseContext(newBase: Context) {
-        val lang = PrefsManager(newBase).getLanguage()
+        val prefs = PrefsManager(newBase)
+
+        AppCompatDelegate.setDefaultNightMode(
+            if (prefs.isDarkMode()) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
         val config = Configuration(newBase.resources.configuration)
-        config.setLocale(Locale(lang))
+        config.setLocale(Locale(prefs.getLanguage()))
         super.attachBaseContext(newBase.createConfigurationContext(config))
     }
 
@@ -55,7 +62,13 @@ class MainActivity : AppCompatActivity() {
         // Manejo de la Navegación
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFragment.navController
-        findViewById<BottomNavigationView>(R.id.bottom_nav).setupWithNavController(navController)
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+        bottomNav.setupWithNavController(navController)
+
+        // No vuelve al inicio tras cambiar Ajuste
+        if (intent.getBooleanExtra("navigate_to_settings", false)) {
+            bottomNav.selectedItemId = R.id.settingsFragment
+        }
 
         // Toolbar
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
