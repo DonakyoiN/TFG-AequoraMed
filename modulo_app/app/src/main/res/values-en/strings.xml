@@ -38,9 +38,22 @@
     <string name="snack_guardado">Medication Saved</string>
     <string name="snack_eliminado">Medication Deleted</string>
 
+    <!-- NavBar -->
+    <string name="navbar_busqueda">Search</string>
+    <string name="navbar_guardado">Saved</string>
+    <string name="navbar_ajustes">Settings</string>
+
     <!-- SavedFragment -->
     <string name="saved_titulo">Saved Medications</string>
     <string name="saved_vacio">No saved medications</string>
+
+    <!-- SettingsFragment -->
+    <string name="settings_titulo">Settings</string>
+    <string name="settings_apariencia">Appearance</string>
+    <string name="settings_tema">Theme</string>
+    <string name="settings_idioma">Language</string>
+    <string name="settings_idioma_es">Spanish</string>
+    <string name="settings_idioma_en">English</string>
 
     <!-- EquivalenciasBottomSheet -->
     <string name="equiv_titulo">Pharmaceutical Equivalences</string>

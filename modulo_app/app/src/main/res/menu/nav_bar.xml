@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/searchFragment"
         android:icon="@drawable/ic_search_icon"
-        android:title="Búsqueda" />
+        android:title="@string/navbar_busqueda" />
     <item android:id="@+id/savedFragment"
         android:icon="@drawable/ic_bookmark_saved"
-        android:title="Guardados" />
+        android:title="@string/navbar_guardado" />
     <item android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_settings_icon"
-        android:title="Ajustes" />
+        android:title="@string/navbar_ajustes" />
 </menu>
 

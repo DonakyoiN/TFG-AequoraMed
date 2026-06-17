@@ -1,8 +1,11 @@
 package esei.uvigo.es.tfg_donakyoin
-
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
+import esei.uvigo.es.tfg_donakyoin.utils.PrefsManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import java.util.Locale
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
@@ -15,8 +18,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
-    /*-- NavController --*/
+    // NavController
     private lateinit var navController: NavController
+
+    override fun attachBaseContext(newBase: Context) {
+        val lang = PrefsManager(newBase).getLanguage()
+        val config = Configuration(newBase.resources.configuration)
+        config.setLocale(Locale(lang))
+        super.attachBaseContext(newBase.createConfigurationContext(config))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
