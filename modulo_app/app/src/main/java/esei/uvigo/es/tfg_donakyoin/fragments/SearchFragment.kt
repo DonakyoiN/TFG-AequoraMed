@@ -154,6 +154,7 @@ class SearchFragment : Fragment() {
         R.id.chip_nombre -> "nombre"
         R.id.chip_atc -> "atc"
         R.id.chip_principio_activo -> "principio_activo"
+        R.id.chip_registro -> "registro"
         else -> "todo"
     }
 

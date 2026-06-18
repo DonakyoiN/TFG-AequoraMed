@@ -13,6 +13,7 @@
     <string name="search_modo_nombre">Nombre Comercial</string>
     <string name="search_modo_atc">Código ATC</string>
     <string name="search_modo_principio">Principio Activo</string>
+    <string name="search_modo_registro">Nº Registro</string>
     <string name="search_eliminar_cd">Eliminar búsqueda</string>
 
     <!-- FilterBottomSheet -->

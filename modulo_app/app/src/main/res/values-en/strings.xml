@@ -13,6 +13,7 @@
     <string name="search_modo_nombre">Commercial Name</string>
     <string name="search_modo_atc">ATC Code</string>
     <string name="search_modo_principio">Active Ingredient</string>
+    <string name="search_modo_registro">Reg. Number</string>
     <string name="search_eliminar_cd">Delete search</string>
 
     <!-- FilterBottomSheet -->
