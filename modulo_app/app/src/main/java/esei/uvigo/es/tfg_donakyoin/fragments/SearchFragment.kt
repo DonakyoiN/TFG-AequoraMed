@@ -70,6 +70,22 @@ class SearchFragment : Fragment() {
         // Búsquedas Recientes
         setupBusquedasRecientes()
 
+        // Observer de Carga
+        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            val pb = binding.progressBar
+            pb.animate().cancel()
+            if (loading) {
+                pb.alpha = 0f
+                pb.visibility = View.VISIBLE
+                pb.animate().alpha(1f).setDuration(200).start()
+            } else {
+                pb.animate().alpha(0f).setDuration(200).withEndAction {
+                    pb.visibility = View.GONE
+                    pb.alpha = 1f
+                }.start()
+            }
+        }
+
         // Observer de los Medicamentos por ViewModel
         viewModel.medicamentos.observe(viewLifecycleOwner) { meds ->
             adapter.submitList(meds)
