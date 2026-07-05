@@ -68,6 +68,15 @@ class EquivalenciasBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
+        // Observer de Errores de Equivalencias
+        viewModel.errorEquiv.observe(viewLifecycleOwner) { error ->
+            if (error != null) {
+                binding.tvEmpty.text = error
+                binding.tvEmpty.isVisible = true
+                binding.rvEquivalencias.isVisible = false
+            }
+        }
+
         // Observer de Equivalencias
         viewModel.equivalencias.observe(viewLifecycleOwner) { equiv ->
             if (equiv == null) return@observe

@@ -63,6 +63,10 @@ class DetailFragment : Fragment() {
             }
         }
 
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            if (error != null) Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
+        }
+
         setupToolbar()
 
         // FAB para Equivalencias Farmacéuticas

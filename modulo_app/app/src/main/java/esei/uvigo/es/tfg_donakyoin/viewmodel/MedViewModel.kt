@@ -1,4 +1,5 @@
 package esei.uvigo.es.tfg_donakyoin.viewmodel
+import esei.uvigo.es.tfg_donakyoin.R
 import esei.uvigo.es.tfg_donakyoin.database.MedDb
 import esei.uvigo.es.tfg_donakyoin.models.*
 import esei.uvigo.es.tfg_donakyoin.network.RetrofitClient
@@ -9,6 +10,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class MedViewModel(app: Application) : AndroidViewModel(app) {
 
@@ -60,6 +64,10 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
+    // Error - Equivalencias
+    private val _errorEquiv = MutableLiveData<String?>()
+    val errorEquiv: LiveData<String?> = _errorEquiv
+
     // Medicamentos Guardados
     private val _medicamentosGuardados = MutableLiveData<List<MedicamentoDto>>()
     val medicamentosGuardados: LiveData<List<MedicamentoDto>> = _medicamentosGuardados
@@ -67,6 +75,13 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     // Estado de Guardado
     private val _isSaved = MutableLiveData(false)
     val isSaved: LiveData<Boolean> = _isSaved
+
+    private fun mapError(e: Throwable): String = when (e) {
+        is UnknownHostException  -> getApplication<Application>().getString(R.string.error_sin_conexion)
+        is SocketTimeoutException -> getApplication<Application>().getString(R.string.error_timeout)
+        is HttpException          -> getApplication<Application>().getString(R.string.error_servidor)
+        else                      -> getApplication<Application>().getString(R.string.error_generico)
+    }
 
     // Mostrar Detalles del Medicamento
     fun cargarDetalle(idMed: Int) {
@@ -79,7 +94,7 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
                 .onFailure {
                     val local = repository.getDetalleGuardado(idMed)
                     if (local != null) _detalle.value = local
-                    else _error.value = it.message
+                    else _error.value = mapError(it)
                 }
             _isLoading.value = false
         }
@@ -170,7 +185,7 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
                 laboratorioActivo
             )
                 .onSuccess { _medicamentos.value = it }
-                .onFailure { _error.value = it.message }
+                .onFailure { _error.value = mapError(it) }
             _isLoading.value = false
         }
     }
@@ -179,10 +194,11 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     fun cargarEquivalencias(idMed: Int) {
         viewModelScope.launch {
             _equivalencias.value = null
+            _errorEquiv.value = null
             _isLoadingEquiv.value = true
             repository.getEquivalencias(idMed)
                 .onSuccess { _equivalencias.value = it }
-                .onFailure { _error.value = it.message }
+                .onFailure { _errorEquiv.value = mapError(it) }
             _isLoadingEquiv.value = false
         }
     }

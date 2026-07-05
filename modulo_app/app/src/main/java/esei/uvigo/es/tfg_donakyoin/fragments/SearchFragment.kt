@@ -95,7 +95,7 @@ class SearchFragment : Fragment() {
 
         // Observer de Errores
         viewModel.error.observe(viewLifecycleOwner) { error ->
-            if (error != null) mostrarEstado("Error: $error")
+            if (error != null) mostrarEstado(error)
         }
 
         if (viewModel.medicamentos.value == null) {

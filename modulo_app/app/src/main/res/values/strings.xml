@@ -63,6 +63,13 @@
     <string name="equiv_tipo_atc">Equivalencia por ATC</string>
     <string name="equiv_tipo_principio">Equivalencia por Principio Activo</string>
 
+    <!-- Errores -->
+    <string name="error_sin_conexion">Sin conexión a Internet. Comprueba tu red e inténtalo de nuevo.</string>
+    <string name="error_timeout">El servidor tardó demasiado en responder. Inténtalo de nuevo.</string>
+    <string name="error_servidor">Error en el servidor. Inténtalo más tarde.</string>
+    <string name="error_generico">Ha ocurrido un error inesperado. Inténtalo de nuevo.</string>
+    <string name="error_equivalencias">No se pudieron cargar las equivalencias. Comprueba tu conexión.</string>
+
     <!-- Países -->
     <string name="pais_es">España</string>
     <string name="pais_cl">Chile</string>

@@ -63,6 +63,13 @@
     <string name="equiv_tipo_atc">ATC Equivalence</string>
     <string name="equiv_tipo_principio">Active Ingredient Equivalence</string>
 
+    <!-- Errors -->
+    <string name="error_sin_conexion">No Internet connection. Check your network and try again.</string>
+    <string name="error_timeout">The server took too long to respond. Please try again.</string>
+    <string name="error_servidor">Server error. Please try again later.</string>
+    <string name="error_generico">An unexpected error occurred. Please try again.</string>
+    <string name="error_equivalencias">Could not load equivalences. Check your connection.</string>
+
     <!-- Países -->
     <string name="pais_es">Spain</string>
     <string name="pais_cl">Chile</string>
