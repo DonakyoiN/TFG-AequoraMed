@@ -12,17 +12,17 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="4dp"
-        app:cardCornerRadius="12dp"
+        android:layout_marginHorizontal="@dimen/spacing_lg"
+        android:layout_marginVertical="@dimen/spacing_xs"
+        app:cardCornerRadius="@dimen/card_corner_radius"
         app:cardElevation="0dp"
         app:strokeColor="?attr/colorOutlineVariant"
-        app:strokeWidth="1dp">
+        app:strokeWidth="@dimen/card_stroke_width">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="@dimen/spacing_lg">
 
             <TextView
                 android:id="@+id/tv_nombre_comercial"
@@ -39,9 +39,9 @@
 
             <ImageView
                 android:id="@+id/iv_bandera"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginStart="8dp"
+                android:layout_width="@dimen/icon_size_md"
+                android:layout_height="@dimen/icon_size_md"
+                android:layout_marginStart="@dimen/spacing_sm"
                 android:scaleType="fitCenter"
                 android:contentDescription="@{med.nom_pais}"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
                 android:id="@+id/tv_dosaje"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/spacing_xs"
                 android:text="@{med.dosaje ?? ``}"
                 android:visibility="@{med.dosaje != null ? View.VISIBLE : View.GONE}"
                 android:textAppearance="?attr/textAppearanceBodySmall"
@@ -89,8 +89,8 @@
                 android:id="@+id/tv_tipo_equivalencia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:paddingHorizontal="8dp"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:paddingHorizontal="@dimen/spacing_sm"
                 android:paddingVertical="3dp"
                 android:gravity="center"
                 android:includeFontPadding="false"

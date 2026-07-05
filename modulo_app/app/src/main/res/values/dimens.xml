@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dimensiones por definir posteriormente -->
+
+    <!-- Espaciado -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">12dp</dimen>
+    <dimen name="spacing_lg">16dp</dimen>
+    <dimen name="spacing_xl">24dp</dimen>
+    <dimen name="spacing_2xl">32dp</dimen>
+
+    <!-- Tarjetas -->
+    <dimen name="card_corner_radius">12dp</dimen>
+    <dimen name="card_stroke_width">1dp</dimen>
+
+    <!-- Iconos y Banderas -->
+    <dimen name="icon_size_sm">20dp</dimen>
+    <dimen name="icon_size_md">28dp</dimen>
+    <dimen name="icon_size_lg">32dp</dimen>
+
+    <!-- Búsqueda -->
+    <dimen name="search_estado_padding_v">64dp</dimen>
     <dimen name="swipe_radius">25dp</dimen>
+
 </resources>

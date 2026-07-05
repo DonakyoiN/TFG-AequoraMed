@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/spacing_lg">
 
                 <!-- Nombre Comercial -->
                 <TextView
@@ -46,9 +46,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_label"
-                    android:layout_marginBottom="16dp"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="12dp"
+                    android:layout_marginBottom="@dimen/spacing_lg"
+                    android:paddingHorizontal="@dimen/spacing_lg"
+                    android:paddingVertical="@dimen/spacing_md"
                     android:lineSpacingExtra="2dp"
                     android:text="@{detalle.nom_comercial}"
                     android:textAllCaps="true"
@@ -60,10 +60,10 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
+                    app:cardCornerRadius="@dimen/card_corner_radius"
                     app:cardElevation="0dp"
                     app:strokeColor="?attr/colorOutlineVariant"
-                    app:strokeWidth="1dp">
+                    app:strokeWidth="@dimen/card_stroke_width">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -75,14 +75,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="16dp">
+                            android:padding="@dimen/spacing_lg">
 
                             <!-- Registro -->
                             <LinearLayout
                                 android:id="@+id/row_reg_pais"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="12dp"
+                                android:layout_marginBottom="@dimen/spacing_md"
                                 android:orientation="vertical"
                                 android:visibility="gone">
 
@@ -107,7 +107,7 @@
                                 android:id="@+id/row_laboratorio"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="12dp"
+                                android:layout_marginBottom="@dimen/spacing_md"
                                 android:orientation="vertical"
                                 android:visibility="@{detalle.laboratorio != null ? View.VISIBLE : View.GONE}">
 
@@ -131,14 +131,14 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="12dp"
+                                android:layout_marginBottom="@dimen/spacing_md"
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal">
 
                                 <ImageView
                                     android:id="@+id/iv_bandera_detalle"
-                                    android:layout_width="28dp"
-                                    android:layout_height="28dp"
+                                    android:layout_width="@dimen/icon_size_md"
+                                    android:layout_height="@dimen/icon_size_md"
                                     android:layout_marginEnd="10dp"
                                     android:contentDescription="@{detalle.nom_pais}"
                                     android:scaleType="fitCenter" />
@@ -171,7 +171,7 @@
                                 android:id="@+id/row_forma"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="12dp"
+                                android:layout_marginBottom="@dimen/spacing_md"
                                 android:orientation="vertical"
                                 android:visibility="@{detalle.forma_farmaceutica != null ? View.VISIBLE : View.GONE}">
 
@@ -220,7 +220,7 @@
                                 android:id="@+id/row_dosaje"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="12dp"
+                                android:layout_marginTop="@dimen/spacing_md"
                                 android:orientation="vertical"
                                 android:visibility="gone">
 
@@ -246,7 +246,7 @@
                         <View
                             android:id="@+id/divider_atc"
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
+                            android:layout_height="@dimen/card_stroke_width"
                             android:background="?attr/colorOutlineVariant"
                             android:visibility="gone" />
 
@@ -255,13 +255,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="16dp"
+                            android:padding="@dimen/spacing_lg"
                             android:visibility="gone">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="8dp"
+                                android:layout_marginBottom="@dimen/spacing_sm"
                                 android:text="@string/detalle_atc"
                                 android:textAppearance="?attr/textAppearanceLabelSmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
@@ -278,7 +278,7 @@
                         <View
                             android:id="@+id/divider_principios"
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
+                            android:layout_height="@dimen/card_stroke_width"
                             android:background="?attr/colorOutlineVariant"
                             android:visibility="gone" />
 
@@ -287,13 +287,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="16dp"
+                            android:padding="@dimen/spacing_lg"
                             android:visibility="gone">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="8dp"
+                                android:layout_marginBottom="@dimen/spacing_sm"
                                 android:text="@string/detalle_principios"
                                 android:textAppearance="?attr/textAppearanceLabelSmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />

@@ -20,8 +20,8 @@
             android:id="@+id/search_bar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="@dimen/spacing_lg"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:hint="@string/search_hint"
             app:menu="@menu/search_bar"
             app:layout_constraintEnd_toEndOf="parent"
@@ -33,9 +33,9 @@
             android:id="@+id/rv_medicamentos"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:clipToPadding="false"
-            android:padding="8dp"
+            android:padding="@dimen/spacing_sm"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -61,8 +61,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingHorizontal="32dp"
-            android:paddingVertical="64dp"
+            android:paddingHorizontal="@dimen/spacing_2xl"
+            android:paddingVertical="@dimen/search_estado_padding_v"
             android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:visibility="gone"
@@ -89,9 +89,9 @@
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="4dp"
+                    android:paddingHorizontal="@dimen/spacing_lg"
+                    android:paddingTop="@dimen/spacing_sm"
+                    android:paddingBottom="@dimen/spacing_xs"
                     android:scrollbars="none">
 
                     <com.google.android.material.chip.ChipGroup
@@ -147,14 +147,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="8dp"
+                    android:paddingTop="@dimen/spacing_sm"
                     android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="4dp"
+                        android:paddingHorizontal="@dimen/spacing_lg"
+                        android:paddingBottom="@dimen/spacing_xs"
                         android:text="@string/search_recent"
                         android:textAppearance="?attr/textAppearanceLabelMedium"
                         android:textColor="?attr/colorOnSurfaceVariant" />

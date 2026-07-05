@@ -76,13 +76,6 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     private val _isSaved = MutableLiveData(false)
     val isSaved: LiveData<Boolean> = _isSaved
 
-    private fun mapError(e: Throwable): String = when (e) {
-        is UnknownHostException  -> getApplication<Application>().getString(R.string.error_sin_conexion)
-        is SocketTimeoutException -> getApplication<Application>().getString(R.string.error_timeout)
-        is HttpException          -> getApplication<Application>().getString(R.string.error_servidor)
-        else                      -> getApplication<Application>().getString(R.string.error_generico)
-    }
-
     // Mostrar Detalles del Medicamento
     fun cargarDetalle(idMed: Int) {
         viewModelScope.launch {
@@ -210,6 +203,14 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
             repository.getFormasFarmaceuticas().onSuccess { _formas.value = it }
             repository.getViasAdministracion().onSuccess { _vias.value = it }
         }
+    }
+
+    // Mapeo de Errores
+    private fun mapError(e: Throwable): String = when (e) {
+        is UnknownHostException  -> getApplication<Application>().getString(R.string.error_sin_conexion)
+        is SocketTimeoutException -> getApplication<Application>().getString(R.string.error_timeout)
+        is HttpException          -> getApplication<Application>().getString(R.string.error_servidor)
+        else                      -> getApplication<Application>().getString(R.string.error_generico)
     }
 
 }

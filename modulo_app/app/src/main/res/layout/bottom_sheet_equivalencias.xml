@@ -14,8 +14,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginHorizontal="@dimen/spacing_lg"
+            android:layout_marginBottom="@dimen/spacing_sm"
             android:text="@string/equiv_titulo"
             android:textAppearance="?attr/textAppearanceTitleLarge"
             android:textColor="?attr/colorOnSurface"
@@ -24,7 +24,7 @@
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
+            android:paddingHorizontal="@dimen/spacing_lg"
             android:scrollbars="none">
 
             <com.google.android.material.chip.ChipGroup
@@ -40,7 +40,7 @@
             android:id="@+id/progress_equivalencias"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:visibility="gone"
             android:indeterminate="true"
             app:trackCornerRadius="4dp" />
@@ -49,7 +49,7 @@
             android:id="@+id/tv_empty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="24dp"
+            android:layout_margin="@dimen/spacing_xl"
             android:gravity="center"
             android:text="@string/equiv_vacio"
             android:textAppearance="?attr/textAppearanceBodyMedium"
@@ -60,7 +60,7 @@
             android:id="@+id/rv_equivalencias"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="24dp"
+            android:paddingBottom="@dimen/spacing_xl"
             android:clipToPadding="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
