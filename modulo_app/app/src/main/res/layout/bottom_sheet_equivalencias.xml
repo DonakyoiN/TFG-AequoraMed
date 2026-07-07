@@ -45,11 +45,24 @@
             android:indeterminate="true"
             app:trackCornerRadius="@dimen/progress_track_corner_radius" />
 
+        <!-- Ícono de Estado -->
+        <ImageView
+            android:id="@+id/iv_empty"
+            android:layout_width="@dimen/estado_icon_size"
+            android:layout_height="@dimen/estado_icon_size"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:visibility="gone"
+            app:tint="?attr/colorOnSurfaceVariant" />
+
+        <!-- Texto de Estado -->
         <TextView
             android:id="@+id/tv_empty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_xl"
+            android:layout_marginHorizontal="@dimen/spacing_xl"
+            android:layout_marginBottom="@dimen/spacing_xl"
             android:gravity="center"
             android:text="@string/equiv_vacio"
             android:textAppearance="?attr/textAppearanceBodyMedium"

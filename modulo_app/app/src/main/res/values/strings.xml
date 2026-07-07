@@ -46,7 +46,7 @@
 
     <!-- SavedFragment -->
     <string name="saved_titulo">Medicamentos Guardados</string>
-    <string name="saved_vacio">No hay medicamentos guardados</string>
+    <string name="saved_vacio">Lista vacía.\n Guarda un medicamento para tenerlo a tu disposición.</string>
 
     <!-- SettingsFragment -->
     <string name="settings_titulo">Ajustes</string>

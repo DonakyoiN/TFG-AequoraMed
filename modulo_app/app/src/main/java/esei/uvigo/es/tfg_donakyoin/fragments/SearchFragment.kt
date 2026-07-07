@@ -5,6 +5,7 @@ import esei.uvigo.es.tfg_donakyoin.viewmodel.*
 import esei.uvigo.es.tfg_donakyoin.*
 import esei.uvigo.es.tfg_donakyoin.utils.RecentSearchManager
 import android.os.Bundle
+import androidx.annotation.DrawableRes
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -93,18 +94,18 @@ class SearchFragment : Fragment() {
         viewModel.medicamentos.observe(viewLifecycleOwner) { meds ->
             adapter.submitList(meds)
             if (meds.isEmpty()) {
-                if (viewModel.ultimaQuery.isEmpty()) mostrarEstado(getString(R.string.search_placeholder))
-                else mostrarEstado(getString(R.string.search_no_results))
+                if (viewModel.ultimaQuery.isEmpty()) mostrarEstado(getString(R.string.search_placeholder), R.drawable.ic_search_home)
+                else mostrarEstado(getString(R.string.search_no_results), R.drawable.ic_no_results)
             } else mostrarLista()
         }
 
         // Observer de Errores
         viewModel.error.observe(viewLifecycleOwner) { error ->
-            if (error != null) mostrarEstado(error)
+            if (error != null) mostrarEstado(error, R.drawable.ic_search_error)
         }
 
         if (viewModel.medicamentos.value == null) {
-            mostrarEstado(getString(R.string.search_placeholder))
+            mostrarEstado(getString(R.string.search_placeholder), R.drawable.ic_search_home)
         }
     }
 
@@ -185,7 +186,7 @@ class SearchFragment : Fragment() {
     // Limpia resultados y restaura el estado inicial
     private fun limpiarVista() {
         viewModel.limpiarBusqueda()
-        mostrarEstado(getString(R.string.search_placeholder))
+        mostrarEstado(getString(R.string.search_placeholder), R.drawable.ic_search_home)
     }
 
     // Selección de Tipo de Búsqueda
@@ -201,10 +202,13 @@ class SearchFragment : Fragment() {
     private fun mostrarLista() {
         binding.rvMedicamentos.visibility = View.VISIBLE
         binding.tvEstado.visibility = View.GONE
+        binding.ivEstado.visibility = View.GONE
     }
 
     // Manejo de Visibilidad según el Estado
-    private fun mostrarEstado(mensaje: String) {
+    private fun mostrarEstado(mensaje: String, @DrawableRes iconRes: Int) {
+        binding.ivEstado.setImageResource(iconRes)
+        binding.ivEstado.visibility = View.VISIBLE
         binding.tvEstado.text = mensaje
         binding.tvEstado.visibility = View.VISIBLE
         binding.rvMedicamentos.visibility = View.GONE

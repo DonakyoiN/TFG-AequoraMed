@@ -46,7 +46,7 @@
 
     <!-- SavedFragment -->
     <string name="saved_titulo">Saved Medications</string>
-    <string name="saved_vacio">No saved medications</string>
+    <string name="saved_vacio">Empty list.\n Save a medication to have it at your disposal.</string>
 
     <!-- SettingsFragment -->
     <string name="settings_titulo">Settings</string>

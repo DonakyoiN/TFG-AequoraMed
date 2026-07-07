@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.graphics.Canvas
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -54,7 +56,7 @@ class SavedFragment : Fragment() {
         viewModel.cargarGuardados()
 
         viewModel.medicamentosGuardados.observe(viewLifecycleOwner) { meds ->
-            if (meds.isEmpty()) mostrarEstado(getString(R.string.saved_vacio))
+            if (meds.isEmpty()) mostrarEstado(getString(R.string.saved_vacio), R.drawable.ic_saved_home)
             else {
                 adapter.submitList(meds)
                 mostrarLista()
@@ -137,15 +139,20 @@ class SavedFragment : Fragment() {
         helper.attachToRecyclerView(binding.rvGuardados)
     }
 
+    // Mostrar lista de guardados
     private fun mostrarLista() {
-        binding.rvGuardados.visibility = View.VISIBLE
-        binding.tvEstado.visibility = View.GONE
+        binding.rvGuardados.isVisible = true
+        binding.tvEstado.isVisible = false
+        binding.ivEstado.isVisible = false
     }
 
-    private fun mostrarEstado(mensaje: String) {
+    // Mostrar ícono Vacío
+    private fun mostrarEstado(mensaje: String, @DrawableRes iconRes: Int) {
+        binding.ivEstado.setImageResource(iconRes)
+        binding.ivEstado.isVisible = true
         binding.tvEstado.text = mensaje
-        binding.tvEstado.visibility = View.VISIBLE
-        binding.rvGuardados.visibility = View.GONE
+        binding.tvEstado.isVisible = true
+        binding.rvGuardados.isVisible = false
     }
 
     // onDestroyView para limpieza de Vista

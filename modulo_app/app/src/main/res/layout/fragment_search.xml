@@ -56,20 +56,38 @@
             app:layout_constraintTop_toBottomOf="@id/search_bar"
             tools:visibility="gone" />
 
+        <!-- Ícono de Estado -->
+        <ImageView
+            android:id="@+id/iv_estado"
+            android:layout_width="@dimen/estado_icon_size"
+            android:layout_height="@dimen/estado_icon_size"
+            android:layout_marginBottom="@dimen/spacing_md"
+            android:visibility="gone"
+            app:tint="?attr/colorOnSurfaceVariant"
+            app:layout_constraintBottom_toTopOf="@id/tv_estado"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_bar"
+            app:layout_constraintVertical_bias="0.4"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:src="@drawable/ic_search_home"
+            tools:visibility="visible" />
+
+        <!-- Texto de Estado -->
         <TextView
             android:id="@+id/tv_estado"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingHorizontal="@dimen/spacing_2xl"
-            android:paddingVertical="@dimen/search_estado_padding_v"
+            android:paddingTop="@dimen/spacing_sm"
             android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/search_bar"
+            app:layout_constraintTop_toBottomOf="@id/iv_estado"
             tools:text="@string/search_placeholder"
             tools:visibility="visible" />
 

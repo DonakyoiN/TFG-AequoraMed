@@ -6,6 +6,7 @@ import esei.uvigo.es.tfg_donakyoin.viewmodel.*
 import esei.uvigo.es.tfg_donakyoin.*
 import esei.uvigo.es.tfg_donakyoin.utils.paisResIdFor
 import android.os.Bundle
+import androidx.annotation.DrawableRes
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.View
@@ -70,11 +71,7 @@ class EquivalenciasBottomSheet : BottomSheetDialogFragment() {
 
         // Observer de Errores de Equivalencias
         viewModel.errorEquiv.observe(viewLifecycleOwner) { error ->
-            if (error != null) {
-                binding.tvEmpty.text = error
-                binding.tvEmpty.isVisible = true
-                binding.rvEquivalencias.isVisible = false
-            }
+            if (error != null) mostrarVacio(error, R.drawable.ic_search_error)
         }
 
         // Observer de Equivalencias
@@ -83,9 +80,7 @@ class EquivalenciasBottomSheet : BottomSheetDialogFragment() {
             val todos = equiv.por_atc.map { it.copy(tipo_equivalencia = getString(R.string.equiv_tipo_atc)) } +
                         equiv.por_principio_activo.map { it.copy(tipo_equivalencia = getString(R.string.equiv_tipo_principio)) }
             if (todos.isEmpty()) {
-                binding.tvEmpty.text = getString(R.string.equiv_vacio)
-                binding.tvEmpty.isVisible = true
-                binding.rvEquivalencias.isVisible = false
+                mostrarVacio(getString(R.string.equiv_vacio), R.drawable.ic_no_results_equiv)
             } else {
                 configurarChips(todos)
                 mostrarSeleccionPais()
@@ -127,14 +122,28 @@ class EquivalenciasBottomSheet : BottomSheetDialogFragment() {
         } ?: return
 
         val filtrados = todos.filter { it.iso_code in seleccionados }
-        binding.tvEmpty.text = getString(R.string.equiv_vacio)
-        binding.tvEmpty.isVisible = filtrados.isEmpty()
-        binding.rvEquivalencias.isVisible = filtrados.isNotEmpty()
+        if (filtrados.isEmpty()) mostrarVacio(getString(R.string.equiv_vacio), R.drawable.ic_no_results_equiv)
+        else {
+            binding.tvEmpty.isVisible = false
+            binding.ivEmpty.isVisible = false
+            binding.rvEquivalencias.isVisible = true
+        }
         adapter.submitList(filtrados)
+    }
+
+    // Muestra ícono + texto de estado vacío
+    private fun mostrarVacio(mensaje: String, @DrawableRes iconRes: Int) {
+        binding.ivEmpty.setImageResource(iconRes)
+        binding.ivEmpty.isVisible = true
+        binding.tvEmpty.text = mensaje
+        binding.tvEmpty.isVisible = true
+        binding.rvEquivalencias.isVisible = false
     }
 
     // Estado inicial: Ningún país seleccionado
     private fun mostrarSeleccionPais() {
+        binding.ivEmpty.setImageResource(R.drawable.ic_equiv_home)
+        binding.ivEmpty.isVisible = true
         binding.tvEmpty.text = getString(R.string.equiv_selecciona_pais)
         binding.tvEmpty.isVisible = true
         binding.rvEquivalencias.isVisible = false
