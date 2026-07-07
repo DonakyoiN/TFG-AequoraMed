@@ -17,6 +17,9 @@ import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.search.SearchView
 
 class SearchFragment : Fragment() {
@@ -117,12 +120,22 @@ class SearchFragment : Fragment() {
     }
 
     // Layout del filtrado
+    @androidx.annotation.OptIn(ExperimentalBadgeUtils::class)
     private fun setupFiltrado() {
         binding.searchBar.setOnMenuItemClickListener { item ->
             if (item.itemId == R.id.action_filter) {
                 findNavController().navigate(R.id.action_searchFragment_to_filterBottomSheet)
                 true
             } else false
+        }
+
+        // Badge indicador de filtros activos
+        val badge = BadgeDrawable.create(requireContext()).apply { isVisible = false }
+        binding.searchBar.post {
+            BadgeUtils.attachBadgeDrawable(badge, binding.searchBar, R.id.action_filter)
+        }
+        viewModel.filtrosActivos.observe(viewLifecycleOwner) { activos ->
+            badge.isVisible = activos
         }
     }
 

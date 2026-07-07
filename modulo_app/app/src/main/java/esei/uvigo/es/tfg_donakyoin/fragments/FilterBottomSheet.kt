@@ -34,9 +34,8 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
 
         // Chips de Países desde el ViewModel
         (viewModel.paises.value ?: emptyList()).forEach { pais ->
-            val chip = Chip(requireContext()).apply {
+            val chip = (layoutInflater.inflate(R.layout.chip_pais_filter, binding.chipGroupPaisesFiltro, false) as Chip).apply {
                 text = paisResIdFor(pais.iso_code)?.let { getString(it) } ?: pais.nom_pais
-                isCheckable = true
                 isChecked = pais.iso_code in viewModel.paisesActivo
                 tag = pais.iso_code
             }
@@ -58,7 +57,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
             binding.etLaboratorio.text?.clear()
         }
 
-        // Aplicar filtros: Guarda en el ViewModel y re-busca
+        // Aplicar filtros: Guarda en el ViewModel y hace la búsqueda de nuevo
         binding.btnAplicar.setOnClickListener {
             viewModel.paisesActivo = binding.chipGroupPaisesFiltro.children
                 .filterIsInstance<Chip>()

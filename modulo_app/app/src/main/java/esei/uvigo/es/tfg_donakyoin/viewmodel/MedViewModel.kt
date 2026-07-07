@@ -48,6 +48,10 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     private val _detalle = MutableLiveData<MedicamentoDetalleDto?>()
     val detalle: LiveData<MedicamentoDetalleDto?> = _detalle
 
+    // Indicador de filtros activos
+    private val _filtrosActivos = MutableLiveData(false)
+    val filtrosActivos: LiveData<Boolean> = _filtrosActivos
+
     // Equivalencias de Medicamento
     private val _equivalencias = MutableLiveData<EquivalenciaDto?>()
     val equivalencias: LiveData<EquivalenciaDto?> = _equivalencias
@@ -56,7 +60,7 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
-    // Estado de Carga - Equivalencias
+    // Estado de Carga en Equivalencias
     private val _isLoadingEquiv = MutableLiveData(false)
     val isLoadingEquiv: LiveData<Boolean> = _isLoadingEquiv
 
@@ -165,6 +169,7 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
 
     // Búsqueda con Filtrado Avanzado
     fun busquedaFiltro() {
+        _filtrosActivos.value = paisesActivo.isNotEmpty() || formaActiva != null || viaActiva != null || laboratorioActivo != null
         if (ultimaQuery.isEmpty()) return
         viewModelScope.launch {
             _isLoading.value = true

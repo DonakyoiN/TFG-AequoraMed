@@ -70,7 +70,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_bar"
-            tools:text="Busca un medicamento para ver resultados"
+            tools:text="@string/search_placeholder"
             tools:visibility="visible" />
 
         <!-- SearchView con Modos de búsqueda y Búsquedas Recientes -->

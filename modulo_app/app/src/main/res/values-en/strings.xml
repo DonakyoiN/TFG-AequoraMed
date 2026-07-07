@@ -23,7 +23,7 @@
     <string name="filter_forma">Pharmaceutical Form</string>
     <string name="filter_via">Route of administration</string>
     <string name="filter_laboratorio">Laboratory</string>
-    <string name="filter_aplicar">Apply filters</string>
+    <string name="filter_aplicar">Apply Filters</string>
 
     <!-- DetailFragment / LocalDetailFragment -->
     <string name="detalle_laboratorio">Laboratory</string>
