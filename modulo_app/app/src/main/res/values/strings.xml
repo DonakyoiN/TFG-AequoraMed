@@ -78,6 +78,7 @@
     <string name="error_servidor">Error en el servidor. Inténtalo más tarde.</string>
     <string name="error_generico">Ha ocurrido un error inesperado. Inténtalo de nuevo.</string>
     <string name="error_equivalencias">No se pudieron cargar las equivalencias. Comprueba tu conexión.</string>
+    <string name="error_busqueda_corta">Introduce al menos 2 caracteres para buscar.</string>
 
     <!-- Países -->
     <string name="pais_es">España</string>

@@ -219,9 +219,12 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
 
     // Mapeo de Errores
     private fun mapError(e: Throwable): String = when (e) {
-        is UnknownHostException  -> getApplication<Application>().getString(R.string.error_sin_conexion)
+        is UnknownHostException   -> getApplication<Application>().getString(R.string.error_sin_conexion)
         is SocketTimeoutException -> getApplication<Application>().getString(R.string.error_timeout)
-        is HttpException          -> getApplication<Application>().getString(R.string.error_servidor)
+        is HttpException          -> when (e.code()) {
+            422  -> getApplication<Application>().getString(R.string.error_busqueda_corta)
+            else -> getApplication<Application>().getString(R.string.error_servidor)
+        }
         else                      -> getApplication<Application>().getString(R.string.error_generico)
     }
 

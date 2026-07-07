@@ -179,6 +179,7 @@ class SearchFragment : Fragment() {
     private fun buscar() {
         val q = binding.searchBar.text.toString().trim()
         if (q.isEmpty()) { limpiarVista(); return }
+        if (q.length < 2) { mostrarEstado(getString(R.string.error_busqueda_corta), R.drawable.ic_no_results); return }
         recentSearches.addSearch(q)
         viewModel.buscarMedicamentos(q = q, modo = getModoSeleccionado())
     }
