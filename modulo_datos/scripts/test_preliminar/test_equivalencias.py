@@ -1,10 +1,7 @@
 import psycopg2
-import os
 import tkinter as tk
 from tkinter import ttk, messagebox
-from dotenv import load_dotenv
-
-load_dotenv()
+from scripts.database import get_connection
 
 # Consultas sobre la schema 'fuentes' (datos crudos pre-ETL)
 # has_atc=1 → país con ATC propio (ES, CA, US) | has_atc=0 → sin ATC (CL, PT)
@@ -17,14 +14,6 @@ COUNTRY_QUERIES: dict[str, tuple[str, str]] = {
 }
 
 
-def get_connection() -> psycopg2.extensions.connection:
-    return psycopg2.connect(
-        dbname=os.getenv("DB_NAME", "db_med"),
-        user=os.getenv("DB_USER", "postgres"),
-        password=os.getenv("DB_PASS", "postgres"),
-        host=os.getenv("DB_HOST", "localhost"),
-        port=os.getenv("DB_PORT", "5432"),
-    )
 
 
 def search(

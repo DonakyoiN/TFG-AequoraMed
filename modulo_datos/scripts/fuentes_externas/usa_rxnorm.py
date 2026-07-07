@@ -1,21 +1,10 @@
-import os
-from dotenv import load_dotenv
 import requests
 import psycopg2
 from psycopg2.extras import execute_values
 import concurrent.futures
 import time
 from requests.adapters import HTTPAdapter
-
-# Configuración DB
-load_dotenv()
-DB_CONFIG = {
-    "dbname": os.getenv("DB_NAME"),
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASS"),
-    "host": os.getenv("DB_HOST"),
-    "port": os.getenv("DB_PORT")
-}
+from scripts.database import DB_CONFIG
 
 # URL Base de RxNorm
 url_base_rxnorm = "https://rxnav.nlm.nih.gov/REST/rxcui"
@@ -25,29 +14,8 @@ sesion_http = requests.Session()
 adapter = HTTPAdapter(pool_connections=10, pool_maxsize=10)
 sesion_http.mount("https://", adapter)
 
-# Grupos ATC a excluir según la ruta de administración del producto
-EXCLUIR_POR_RUTA = {
-    "ORAL":       {"M02", "G02", "R02", "C01"},
-    "TOPICAL":    {"M01", "G02", "R02", "C01"},
-    "OPHTHALMIC": {"M01", "M02", "G02", "R02", "C01"},
-    "OTIC":       {"M01", "M02", "G02", "R01", "C01"},
-    "NASAL":      {"M01", "M02", "G02", "R02", "C01", "S01", "S02"},
-    "INHALATION": {"M01", "M02", "G02", "R01", "R02", "C01", "S01"},
-    "VAGINAL":    {"M01", "M02", "R01", "R02", "C01", "S01"},
-}
-
-def filtrar_atc_por_ruta(atc_codes, route):
-    route_upper = (route or "").strip().upper()
-    excluir = EXCLUIR_POR_RUTA.get(route_upper, set())
-    if not excluir:
-        return atc_codes
-    return [
-        atc for atc in atc_codes
-        if not any(atc.startswith(prefijo) for prefijo in excluir)
-    ]
-
-# 3. Obtención de las ATC y Principios Activos de USA
-def obtener_atc_pa(rxcui, route="N/A"):
+# Obtención de las ATC y Principios Activos de USA
+def obtener_atc_pa(rxcui):
     atc_codes = []
     principios_activos = []
 
@@ -75,8 +43,7 @@ def obtener_atc_pa(rxcui, route="N/A"):
                             atc_codes.extend([p['propValue'] for p in ing_props if p['propName'] == 'ATC'])
                         time.sleep(0.05)
 
-        # Filtrar ATCs según la ruta de administración del producto
-        atc_codes = filtrar_atc_por_ruta(list(set(atc_codes)), route)
+        atc_codes = [atc for atc in set(atc_codes) if len(atc) == 7]
 
         atc_final = " / ".join(atc_codes) if atc_codes else "N/A"
         ing_final = " / ".join(list(set(principios_activos))) if principios_activos else "N/A"
@@ -96,8 +63,8 @@ def carga_atc_pa_usamed():
         conexion = psycopg2.connect(**DB_CONFIG)
         cursor = conexion.cursor()
 
-        # Selección de rxcui + ruta para aplicar el filtro por ruta
-        cursor.execute("SELECT DISTINCT rxnorm_id, route_administration FROM fuentes.usa_med;")
+        # Selección de rxcui
+        cursor.execute("SELECT DISTINCT rxnorm_id FROM fuentes.usa_med;")
         filas = cursor.fetchall()
 
         total = len(filas)
@@ -109,7 +76,7 @@ def carga_atc_pa_usamed():
             lote = filas[i : i + size_lote]
 
             with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-                resultados = list(executor.map(lambda x: obtener_atc_pa(x[0], x[1]), lote))
+                resultados = list(executor.map(lambda x: obtener_atc_pa(x[0]), lote))
 
             # Sobreescribimos los N/A anteriores por el ATC y el Principio Activo
             update_query = "UPDATE fuentes.usa_med SET id_atc = %s, name_ingredient = %s WHERE rxnorm_id = %s;"

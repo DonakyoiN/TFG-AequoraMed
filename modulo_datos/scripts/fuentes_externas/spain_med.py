@@ -1,21 +1,10 @@
-import os
-from dotenv import load_dotenv
 import requests
 import psycopg2
 from psycopg2.extras import execute_values
 import concurrent.futures
 import time
 from requests.adapters import HTTPAdapter
-
-# Configuración DB
-load_dotenv()
-DB_CONFIG = {
-    "dbname": os.getenv("DB_NAME"),
-    "user": os.getenv("DB_USER"),    
-    "password": os.getenv("DB_PASS"),
-    "host": os.getenv("DB_HOST"),
-    "port": os.getenv("DB_PORT")
-}
+from scripts.database import DB_CONFIG
 
 # URLs de CIMA
 url_busqueda = "https://cima.aemps.es/cima/rest/medicamentos" # Para lista de medicamentos

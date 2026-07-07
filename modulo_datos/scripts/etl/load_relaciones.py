@@ -1,6 +1,5 @@
-import sys
-import os
-from db_conn import get_connection
+from psycopg2.extras import execute_values
+from scripts.database import get_connection
 
 
 def load_data_maps(cursor):
@@ -47,11 +46,7 @@ def insert_identificado_por(cursor, dict_pais, dict_med, dict_atc):
                     to_insert.append((id_med, dict_atc[p]))
     
     if to_insert:
-        cursor.executemany("""
-            INSERT INTO med.identificado_por (id_med, id_atc)
-            VALUES (%s, %s)
-            ON CONFLICT DO NOTHING
-        """, list(set(to_insert))) # set para quitar duplicados en el scope de Python
+        execute_values(cursor, "INSERT INTO med.identificado_por (id_med, id_atc) VALUES %s ON CONFLICT DO NOTHING", list(set(to_insert))) # set para quitar duplicados en el scope de Python
 
 # Insertar relaciones Medicamento - Principio Activo
 def insert_contiene(cursor, dict_pais, dict_med, dict_pa):
@@ -83,12 +78,7 @@ def insert_contiene(cursor, dict_pais, dict_med, dict_pa):
                     to_insert.append((id_med, dict_pa[p]))
 
     if to_insert:
-        dedup_set = set(to_insert)
-        cursor.executemany("""
-            INSERT INTO med.contiene (id_med, id_pa)
-            VALUES (%s, %s)
-            ON CONFLICT DO NOTHING
-        """, list(dedup_set))
+        execute_values(cursor, "INSERT INTO med.contiene (id_med, id_pa) VALUES %s ON CONFLICT DO NOTHING", list(set(to_insert)))
 
 def insert_asociado_con(cursor):
     print("Inhiriendo asociación ATC - Principio Activo...")

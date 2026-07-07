@@ -1,6 +1,5 @@
-import sys
-import os
-from db_conn import get_connection
+from psycopg2.extras import execute_values
+from scripts.database import get_connection
 
 # Insertar Países
 def insert_paises(cursor):
@@ -17,10 +16,7 @@ def insert_paises(cursor):
     to_insert = [p for p in paises if p[0] not in existing]
     
     if to_insert:
-        cursor.executemany("""
-            INSERT INTO med.pais (iso_code, nom_pais)
-            VALUES (%s, %s)
-        """, to_insert)
+        execute_values(cursor, "INSERT INTO med.pais (iso_code, nom_pais) VALUES %s", to_insert)
 
 # Insertar códigos ATC
 def insert_atc(cursor):
@@ -100,10 +96,7 @@ def insert_atc(cursor):
             ))
     
     if to_insert:
-        cursor.executemany("""
-            INSERT INTO med.atc (code_atc, desc_es, desc_en)
-            VALUES (%s, %s, %s)
-        """, to_insert)
+        execute_values(cursor, "INSERT INTO med.atc (code_atc, desc_es, desc_en) VALUES %s", to_insert)
 
 # Insertar Principios Activos
 def insert_principios_activos(cursor):
@@ -132,10 +125,7 @@ def insert_principios_activos(cursor):
     to_insert = [(pa,) for pa in sorted(list(pa_set)) if pa not in existing]
     
     if to_insert:
-        cursor.executemany("""
-            INSERT INTO med.principio_activo (nom_estandar)
-            VALUES (%s)
-        """, to_insert)
+        execute_values(cursor, "INSERT INTO med.principio_activo (nom_estandar) VALUES %s", to_insert)
 
 # Insertar formas y vías
 def insert_formas_vias(cursor):
@@ -159,10 +149,7 @@ def insert_formas_vias(cursor):
     to_insert_formas = [(f,) for f in sorted(list(formas_set)) if f not in existing_formas]
     
     if to_insert_formas:
-        cursor.executemany("""
-            INSERT INTO med.forma_farmaceutica (descripcion)
-            VALUES (%s)
-        """, to_insert_formas)
+        execute_values(cursor, "INSERT INTO med.forma_farmaceutica (descripcion) VALUES %s", to_insert_formas)
     
     # Vías de Administración
     q_vias = [
@@ -184,10 +171,7 @@ def insert_formas_vias(cursor):
     to_insert_vias = [(v,) for v in sorted(list(vias_set)) if v not in existing_vias]
     
     if to_insert_vias:
-        cursor.executemany("""
-            INSERT INTO med.via_administracion (descripcion)
-            VALUES (%s)
-        """, to_insert_vias)
+        execute_values(cursor, "INSERT INTO med.via_administracion (descripcion) VALUES %s", to_insert_vias)
 
 def main():
     conn = get_connection()
