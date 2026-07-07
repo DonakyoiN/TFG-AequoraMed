@@ -48,8 +48,8 @@
         <!-- Ícono de Estado -->
         <ImageView
             android:id="@+id/iv_empty"
-            android:layout_width="@dimen/estado_icon_size"
-            android:layout_height="@dimen/estado_icon_size"
+            android:layout_width="@dimen/estado_icon_size_sm"
+            android:layout_height="@dimen/estado_icon_size_sm"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/spacing_xl"
             android:layout_marginBottom="@dimen/spacing_sm"

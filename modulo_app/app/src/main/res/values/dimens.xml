@@ -18,8 +18,9 @@
     <dimen name="icon_size_md">28dp</dimen>
     <dimen name="icon_size_lg">32dp</dimen>
 
-    <!-- Estado vacío -->
+    <!-- Estado -->
     <dimen name="estado_icon_size">80dp</dimen>
+    <dimen name="estado_icon_size_sm">56dp</dimen>
 
     <!-- Búsqueda -->
     <dimen name="search_estado_padding_v">64dp</dimen>

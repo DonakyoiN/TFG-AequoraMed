@@ -38,6 +38,7 @@
     <!-- Snackbars -->
     <string name="snack_guardado">Medicamento Guardado</string>
     <string name="snack_eliminado">Medicamento Eliminado</string>
+    <string name="snack_deshacer">Deshacer</string>
 
     <!-- NavBar -->
     <string name="navbar_busqueda">Búsqueda</string>

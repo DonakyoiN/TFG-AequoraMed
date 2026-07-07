@@ -29,6 +29,8 @@ class SavedFragment : Fragment() {
     private val viewModel: MedViewModel by activityViewModels()
     // Adapter
     private lateinit var adapter: MedAdapter
+    // ItemTouchHelper
+    private lateinit var touchHelper: ItemTouchHelper
 
     // onCreateView para SavedFragment
     override fun onCreateView(
@@ -88,12 +90,25 @@ class SavedFragment : Fragment() {
                 target: RecyclerView.ViewHolder
             ): Boolean = false
 
-            // Deslizar a la izquierda: Eliminar
+            // Deslizar a la izquierda: Eliminar con opción de Deshacer
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.bindingAdapterPosition
                 val med = adapter.currentList.getOrNull(position) ?: return
-                viewModel.eliminarMed(med.id_med)
-                Snackbar.make(binding.rvGuardados, getString(R.string.snack_eliminado), Snackbar.LENGTH_SHORT).show()
+                val filtered = adapter.currentList.filter { it.id_med != med.id_med }
+                adapter.submitList(filtered)
+                if (filtered.isEmpty()) mostrarEstado(getString(R.string.saved_vacio), R.drawable.ic_saved_home)
+                Snackbar.make(binding.rvGuardados, getString(R.string.snack_eliminado), Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.snack_deshacer)) {
+                        touchHelper.attachToRecyclerView(null)
+                        viewModel.cargarGuardados()
+                        touchHelper.attachToRecyclerView(binding.rvGuardados)
+                    }
+                    .addCallback(object : com.google.android.material.snackbar.Snackbar.Callback() {
+                        override fun onDismissed(snackbar: com.google.android.material.snackbar.Snackbar, event: Int) {
+                            if (event != DISMISS_EVENT_ACTION) viewModel.eliminarMed(med.id_med)
+                        }
+                    })
+                    .show()
             }
 
             // Limpia posición al soltar
@@ -136,6 +151,7 @@ class SavedFragment : Fragment() {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
         })
+        touchHelper = helper
         helper.attachToRecyclerView(binding.rvGuardados)
     }
 
