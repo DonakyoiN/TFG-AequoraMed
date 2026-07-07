@@ -1,5 +1,4 @@
 package esei.uvigo.es.tfg_donakyoin.fragments
-import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -93,13 +92,9 @@ class SettingsFragment : Fragment() {
             .alpha(1f)
             .setDuration(200)
             .withEndAction {
-                val intent = Intent(activity, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                    putExtra("navigate_to_settings", true)
-                }
-                activity.startActivity(intent)
-                @Suppress("DEPRECATION")
-                activity.overridePendingTransition(R.anim.activity_fade_in, 0)
+                activity.window.setWindowAnimations(0)
+                MainActivity.pendingThemeChange = true
+                activity.recreate()
             }
             .start()
     }

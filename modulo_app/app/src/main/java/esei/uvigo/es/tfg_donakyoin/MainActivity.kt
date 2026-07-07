@@ -22,6 +22,10 @@ class MainActivity : AppCompatActivity() {
     // NavController
     private lateinit var navController: NavController
 
+    companion object {
+        var pendingThemeChange = false
+    }
+
     override fun attachBaseContext(newBase: Context) {
         val prefs = PrefsManager(newBase)
 
@@ -39,6 +43,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        // Fade-in tras recreate de tema/idioma para evitar parpadeos
+        if (pendingThemeChange) {
+            pendingThemeChange = false
+            val root = findViewById<android.view.View>(R.id.main)
+            root.alpha = 0f
+            root.post { root.animate().alpha(1f).setDuration(200).start() }
+        }
 
         // Insets para configurar: Barra Superior + Barra de Navegación
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
