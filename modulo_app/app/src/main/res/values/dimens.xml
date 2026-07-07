@@ -22,4 +22,24 @@
     <dimen name="search_estado_padding_v">64dp</dimen>
     <dimen name="swipe_radius">25dp</dimen>
 
+    <!-- Componentes UI -->
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="flag_margin_end">10dp</dimen>
+    <dimen name="title_line_spacing">2dp</dimen>
+    <dimen name="progress_track_corner_radius">4dp</dimen>
+
+    <!-- Acerca de -->
+    <dimen name="about_logo_size">96dp</dimen>
+
+    <!-- Items de Lista -->
+    <dimen name="item_lab_margin_top">2dp</dimen>
+    <dimen name="item_forma_margin_top">6dp</dimen>
+    <dimen name="item_equiv_padding_v">3dp</dimen>
+
+    <!-- Filtros -->
+    <dimen name="filter_field_margin_bottom">20dp</dimen>
+
+    <!-- Guardados -->
+    <dimen name="saved_list_margin_top">10dp</dimen>
+
 </resources>

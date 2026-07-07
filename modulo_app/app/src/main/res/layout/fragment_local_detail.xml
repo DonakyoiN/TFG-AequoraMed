@@ -49,7 +49,7 @@
                     android:layout_marginBottom="@dimen/spacing_lg"
                     android:paddingHorizontal="@dimen/spacing_lg"
                     android:paddingVertical="@dimen/spacing_md"
-                    android:lineSpacingExtra="2dp"
+                    android:lineSpacingExtra="@dimen/title_line_spacing"
                     android:text="@{detalle.nom_comercial}"
                     android:textAllCaps="true"
                     android:textAppearance="?attr/textAppearanceTitleSmall"
@@ -139,7 +139,7 @@
                                     android:id="@+id/iv_bandera_detalle"
                                     android:layout_width="@dimen/icon_size_md"
                                     android:layout_height="@dimen/icon_size_md"
-                                    android:layout_marginEnd="10dp"
+                                    android:layout_marginEnd="@dimen/flag_margin_end"
                                     android:contentDescription="@{detalle.nom_pais}"
                                     android:scaleType="fitCenter" />
 

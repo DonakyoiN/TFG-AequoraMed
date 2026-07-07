@@ -33,7 +33,7 @@
             android:id="@+id/rv_guardados"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/saved_list_margin_top"
             android:padding="@dimen/spacing_sm"
             android:clipToPadding="false"
             android:visibility="gone"

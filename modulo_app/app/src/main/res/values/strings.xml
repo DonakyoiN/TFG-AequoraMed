@@ -63,6 +63,14 @@
     <string name="equiv_tipo_atc">Equivalencia por ATC</string>
     <string name="equiv_tipo_principio">Equivalencia por Principio Activo</string>
 
+    <!-- Acerca de -->
+    <string name="about_titulo">Acerca de</string>
+    <string name="about_descripcion">Aplicación de equivalencias farmacéuticas internacional</string>
+    <string name="about_autor">Marcelo Antonio Veliz Ossandon · 2026</string>
+    <string name="about_code">TFG EI 25/26–123</string>
+    <string name="about_disclaimer_titulo">Aviso</string>
+    <string name="about_disclaimer">Las equivalencias mostradas son farmacéuticas y no implican bioequivalencia ni intercambiabilidad clínica.</string>
+
     <!-- Errores -->
     <string name="error_sin_conexion">Sin conexión a Internet. Comprueba tu red e inténtalo de nuevo.</string>
     <string name="error_timeout">El servidor tardó demasiado en responder. Inténtalo de nuevo.</string>

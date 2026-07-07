@@ -43,7 +43,7 @@
             android:layout_marginTop="@dimen/spacing_sm"
             android:visibility="gone"
             android:indeterminate="true"
-            app:trackCornerRadius="4dp" />
+            app:trackCornerRadius="@dimen/progress_track_corner_radius" />
 
         <TextView
             android:id="@+id/tv_empty"

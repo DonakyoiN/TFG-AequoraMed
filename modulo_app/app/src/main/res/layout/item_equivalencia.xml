@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_sm"
                 android:paddingHorizontal="@dimen/spacing_sm"
-                android:paddingVertical="3dp"
+                android:paddingVertical="@dimen/item_equiv_padding_v"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="@{med.tipo_equivalencia ?? ``}"
