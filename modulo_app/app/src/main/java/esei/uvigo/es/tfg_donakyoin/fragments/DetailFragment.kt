@@ -53,7 +53,18 @@ class DetailFragment : Fragment() {
         viewModel.checkSaved(args.idMed)
 
         viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
-            binding.progressDetail.visibility = if (loading) View.VISIBLE else View.GONE
+            val pb = binding.progressDetail
+            pb.animate().cancel()
+            if (loading) {
+                pb.alpha = 0f
+                pb.visibility = View.VISIBLE
+                pb.animate().alpha(1f).setDuration(200).start()
+            } else {
+                pb.animate().alpha(0f).setDuration(200).withEndAction {
+                    pb.visibility = View.GONE
+                    pb.alpha = 1f
+                }.start()
+            }
         }
 
         viewModel.detalle.observe(viewLifecycleOwner) { detalle ->

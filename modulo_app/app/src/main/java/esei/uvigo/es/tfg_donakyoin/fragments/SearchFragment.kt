@@ -92,8 +92,10 @@ class SearchFragment : Fragment() {
         // Observer de los Medicamentos por ViewModel
         viewModel.medicamentos.observe(viewLifecycleOwner) { meds ->
             adapter.submitList(meds)
-            if (meds.isEmpty()) mostrarEstado(getString(R.string.search_no_results))
-            else mostrarLista()
+            if (meds.isEmpty()) {
+                if (viewModel.ultimaQuery.isEmpty()) mostrarEstado(getString(R.string.search_placeholder))
+                else mostrarEstado(getString(R.string.search_no_results))
+            } else mostrarLista()
         }
 
         // Observer de Errores
@@ -144,6 +146,8 @@ class SearchFragment : Fragment() {
         binding.searchView.addTransitionListener { _, _, newState ->
             if (newState == SearchView.TransitionState.SHOWN) {
                 refreshBusquedasRecientes()
+            } else if (newState == SearchView.TransitionState.HIDDEN) {
+                if (binding.searchBar.text.isBlank()) limpiarVista()
             }
         }
     }
@@ -172,10 +176,16 @@ class SearchFragment : Fragment() {
 
     // Búsqueda de Medicamentos
     private fun buscar() {
-        val q = binding.searchBar.text?.toString()?.trim() ?: return
-        if (q.isEmpty()) return
+        val q = binding.searchBar.text.toString().trim()
+        if (q.isEmpty()) { limpiarVista(); return }
         recentSearches.addSearch(q)
         viewModel.buscarMedicamentos(q = q, modo = getModoSeleccionado())
+    }
+
+    // Limpia resultados y restaura el estado inicial
+    private fun limpiarVista() {
+        viewModel.limpiarBusqueda()
+        mostrarEstado(getString(R.string.search_placeholder))
     }
 
     // Selección de Tipo de Búsqueda

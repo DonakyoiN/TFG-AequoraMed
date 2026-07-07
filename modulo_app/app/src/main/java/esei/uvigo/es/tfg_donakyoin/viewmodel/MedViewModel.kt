@@ -188,6 +188,13 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    // Limpia los resultados de búsqueda
+    fun limpiarBusqueda() {
+        _medicamentos.value = emptyList()
+        ultimaQuery = ""
+        _error.value = null
+    }
+
     // Carga de Equivalencias de un Medicamento
     fun cargarEquivalencias(idMed: Int) {
         viewModelScope.launch {
