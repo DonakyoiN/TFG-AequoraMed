@@ -7,8 +7,13 @@
 CREATE SCHEMA IF NOT EXISTS fuentes;
 CREATE SCHEMA IF NOT EXISTS med;
 
--- Extensión para búsqueda insensible a tildes
+-- Extensiones para búsqueda insensible a tildes y búsqueda parcial eficiente
 CREATE EXTENSION IF NOT EXISTS unaccent;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+-- Wrapper IMMUTABLE necesario para crear índices sobre unaccent()
+CREATE OR REPLACE FUNCTION f_unaccent(text) RETURNS text AS
+$$ SELECT public.unaccent($1) $$ LANGUAGE sql IMMUTABLE SET search_path = public;
 
 -- FUENTES EXTERNAS
 -- Tabla para almacenar los medicamentos de CIMA Rest API para España
@@ -181,3 +186,10 @@ CREATE TABLE med.asociado_con(
     FOREIGN KEY (id_atc) REFERENCES med.atc (id_atc) ON DELETE CASCADE,
     FOREIGN KEY (id_pa) REFERENCES med.principio_activo (id_pa) ON DELETE CASCADE
 );
+
+-- Índices GIN de trigramas para búsqueda parcial insensible a tildes
+CREATE INDEX idx_med_nom_trgm      ON med.medicamento        USING gin(f_unaccent(nom_comercial) gin_trgm_ops);
+CREATE INDEX idx_med_lab_trgm      ON med.medicamento        USING gin(f_unaccent(laboratorio)   gin_trgm_ops);
+CREATE INDEX idx_pa_nom_trgm       ON med.principio_activo   USING gin(f_unaccent(nom_estandar)  gin_trgm_ops);
+CREATE INDEX idx_ff_desc_trgm      ON med.forma_farmaceutica USING gin(f_unaccent(descripcion)   gin_trgm_ops);
+CREATE INDEX idx_va_desc_trgm      ON med.via_administracion USING gin(f_unaccent(descripcion)   gin_trgm_ops);

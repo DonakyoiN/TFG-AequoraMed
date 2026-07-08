@@ -36,18 +36,18 @@ def buscar_medicamentos(
 
     # Cláusulas WHERE según el modo de búsqueda - Insensible a mayúsculas/acentos con extensión unaccent
     if modo == "nombre":
-        where_busqueda = "unaccent(m.nom_comercial) ILIKE unaccent(%(q)s)"
+        where_busqueda = "f_unaccent(m.nom_comercial) ILIKE f_unaccent(%(q)s)"
     elif modo == "principio_activo":
-        where_busqueda = "EXISTS (SELECT 1 FROM med.contiene c JOIN med.principio_activo pa ON c.id_pa = pa.id_pa WHERE c.id_med = m.id_med AND unaccent(pa.nom_estandar) ILIKE unaccent(%(q)s))"
+        where_busqueda = "EXISTS (SELECT 1 FROM med.contiene c JOIN med.principio_activo pa ON c.id_pa = pa.id_pa WHERE c.id_med = m.id_med AND f_unaccent(pa.nom_estandar) ILIKE f_unaccent(%(q)s))"
     elif modo == "atc":
         where_busqueda = "EXISTS (SELECT 1 FROM med.identificado_por ip JOIN med.atc a ON ip.id_atc = a.id_atc WHERE ip.id_med = m.id_med AND a.code_atc ILIKE %(q)s)"
     elif modo == "registro":
         where_busqueda = "m.reg_pais ILIKE %(q)s"
     else:
         where_busqueda = """(
-            unaccent(m.nom_comercial) ILIKE unaccent(%(q)s)
+            f_unaccent(m.nom_comercial) ILIKE f_unaccent(%(q)s)
             OR m.reg_pais ILIKE %(q)s
-            OR EXISTS (SELECT 1 FROM med.contiene c JOIN med.principio_activo pa ON c.id_pa = pa.id_pa WHERE c.id_med = m.id_med AND unaccent(pa.nom_estandar) ILIKE unaccent(%(q)s))
+            OR EXISTS (SELECT 1 FROM med.contiene c JOIN med.principio_activo pa ON c.id_pa = pa.id_pa WHERE c.id_med = m.id_med AND f_unaccent(pa.nom_estandar) ILIKE f_unaccent(%(q)s))
             OR EXISTS (SELECT 1 FROM med.identificado_por ip JOIN med.atc a ON ip.id_atc = a.id_atc WHERE ip.id_med = m.id_med AND a.code_atc ILIKE %(q)s)
         )"""
 
@@ -71,15 +71,15 @@ def buscar_medicamentos(
         params["pais"] = [p.upper() for p in pais]
 
     if forma:
-        sql += " AND unaccent(ff.descripcion) ILIKE unaccent(%(forma)s)"
+        sql += " AND f_unaccent(ff.descripcion) ILIKE f_unaccent(%(forma)s)"
         params["forma"] = f"%{forma}%"
 
     if via:
-        sql += " AND unaccent(va.descripcion) ILIKE unaccent(%(via)s)"
+        sql += " AND f_unaccent(va.descripcion) ILIKE f_unaccent(%(via)s)"
         params["via"] = f"%{via}%"
 
     if laboratorio:
-        sql += " AND unaccent(m.laboratorio) ILIKE unaccent(%(laboratorio)s)"
+        sql += " AND f_unaccent(m.laboratorio) ILIKE f_unaccent(%(laboratorio)s)"
         params["laboratorio"] = f"%{laboratorio}%"
 
     sql += " ORDER BY m.nom_comercial LIMIT %(limit)s OFFSET %(offset)s"
