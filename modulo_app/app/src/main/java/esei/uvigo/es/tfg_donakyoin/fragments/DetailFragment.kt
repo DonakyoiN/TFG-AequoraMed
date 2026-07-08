@@ -75,7 +75,9 @@ class DetailFragment : Fragment() {
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
-            if (error != null) Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
+            if (error != null) Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG)
+                .setAnchorView(requireActivity().findViewById(R.id.bottom_nav))
+                .show()
         }
 
         setupToolbar()
@@ -109,10 +111,14 @@ class DetailFragment : Fragment() {
                     R.id.action_guardar -> {
                         if (viewModel.isSaved.value == true) {
                             viewModel.eliminarMed(args.idMed)
-                            Snackbar.make(binding.root, getString(R.string.snack_eliminado), Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(binding.root, getString(R.string.snack_eliminado), 1000)
+                                .setAnchorView(requireActivity().findViewById(R.id.bottom_nav))
+                                .show()
                         } else {
                             viewModel.guardarMed()
-                            Snackbar.make(binding.root, getString(R.string.snack_guardado), Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(binding.root, getString(R.string.snack_guardado), 1000)
+                                .setAnchorView(requireActivity().findViewById(R.id.bottom_nav))
+                                .show()
                         }
                         true
                     }

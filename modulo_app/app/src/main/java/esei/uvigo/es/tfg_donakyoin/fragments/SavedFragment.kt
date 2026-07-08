@@ -97,7 +97,8 @@ class SavedFragment : Fragment() {
                 val filtered = adapter.currentList.filter { it.id_med != med.id_med }
                 adapter.submitList(filtered)
                 if (filtered.isEmpty()) mostrarEstado(getString(R.string.saved_vacio), R.drawable.ic_saved_home)
-                Snackbar.make(binding.rvGuardados, getString(R.string.snack_eliminado), Snackbar.LENGTH_LONG)
+                Snackbar.make(binding.rvGuardados, getString(R.string.snack_eliminado), 1000)
+                    .setAnchorView(requireActivity().findViewById(R.id.bottom_nav))
                     .setAction(getString(R.string.snack_deshacer)) {
                         touchHelper.attachToRecyclerView(null)
                         viewModel.cargarGuardados()
