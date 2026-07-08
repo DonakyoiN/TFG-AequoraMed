@@ -3,9 +3,12 @@
   ||  DDL de la base de datos  ||
 */
 
--- SCHEMAS de la Base de Datos
+-- Schemas de la Base de Datos
 CREATE SCHEMA IF NOT EXISTS fuentes;
 CREATE SCHEMA IF NOT EXISTS med;
+
+-- Extensión para búsqueda insensible a tildes
+CREATE EXTENSION IF NOT EXISTS unaccent;
 
 -- FUENTES EXTERNAS
 -- Tabla para almacenar los medicamentos de CIMA Rest API para España
