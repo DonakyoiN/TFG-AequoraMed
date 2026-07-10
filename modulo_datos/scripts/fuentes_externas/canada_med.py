@@ -18,8 +18,15 @@ def cargar_datos_canadamed():
 
     # Descarga de datos de la API pasado al pandas
     print("Descargando Datos...")
-    df_drugs = pd.DataFrame(requests.get(url_drugs).json())
-    df_ingredients = pd.DataFrame(requests.get(url_ingredients).json())
+    raw_drugs = requests.get(url_drugs).json()
+    raw_ingredients = requests.get(url_ingredients).json()
+
+    if not raw_drugs or not raw_ingredients:
+        print("La API DPD de Health Canada no devolvió datos (puede estar en mantenimiento). Saltando Canada.")
+        return
+
+    df_drugs = pd.DataFrame(raw_drugs)
+    df_ingredients = pd.DataFrame(raw_ingredients)
     df_atc = pd.DataFrame(requests.get(url_atc).json())
     df_route = pd.DataFrame(requests.get(url_route).json())
     df_form = pd.DataFrame(requests.get(url_form).json())
