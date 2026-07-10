@@ -38,6 +38,10 @@ def cargar_datos_fda():
             print(f"\nError en la descarga: {e}")
             break
 
+    if not medicamentos_usa:
+        print("La API de openFDA no devolvió datos (puede estar en mantenimiento). Saltando USA FDA.")
+        return
+
     print(f"\nProcesando {len(medicamentos_usa)} medicamentos de la FDA...")
 
     lista_meds = []
