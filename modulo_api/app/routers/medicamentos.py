@@ -14,7 +14,7 @@ router = APIRouter(
 @router.get("/buscar", response_model=list[MedicamentoResumen])
 def buscar_medicamentos(
     q: str = Query(min_length=2, description="Texto a buscar"),
-    modo: Literal["todo", "nombre", "principio_activo", "atc"] = Query(default="todo", description="Campo sobre el que buscar"),
+    modo: Literal["todo", "nombre", "principio_activo", "atc", "registro"] = Query(default="todo", description="Campo sobre el que buscar"),
     pais: list[str] | None = Query(default=None, description="Filtrar por código ISO del país, repetible (?pais=ES&pais=CL)"),
     forma: str | None = Query(default=None, description="Filtrar por forma farmacéutica (ILIKE)"),
     via: str | None = Query(default=None, description="Filtrar por vía de administración (ILIKE)"),
@@ -28,22 +28,26 @@ def buscar_medicamentos(
     - modo=nombre: Búsqueda por Nombre Comercial del medicamento.
     - modo=principio_activo: Búsqueda por Principio Activo del medicamento.
     - modo=atc: Búsqueda por Código ATC del medicamento.
-    - modo=todo (defecto): OR de los tres criterios anteriores.
+    - modo=registro: Búsqueda por Número de Registro del país (reg_pais).
+    - modo=todo (defecto): OR de los cuatro criterios anteriores.
     Admite filtros adicionales por país, forma farmacéutica, vía y laboratorio, más paginación.
     """
     q_like = f"%{q}%"
 
-    # Cláusulas WHERE según el modo de búsqueda
+    # Cláusulas WHERE según el modo de búsqueda - Insensible a mayúsculas/acentos con extensión unaccent
     if modo == "nombre":
-        where_busqueda = "m.nom_comercial ILIKE %(q)s"
+        where_busqueda = "f_unaccent(m.nom_comercial) ILIKE f_unaccent(%(q)s)"
     elif modo == "principio_activo":
-        where_busqueda = "EXISTS (SELECT 1 FROM med.contiene c JOIN med.principio_activo pa ON c.id_pa = pa.id_pa WHERE c.id_med = m.id_med AND pa.nom_estandar ILIKE %(q)s)"
+        where_busqueda = "EXISTS (SELECT 1 FROM med.contiene c JOIN med.principio_activo pa ON c.id_pa = pa.id_pa WHERE c.id_med = m.id_med AND f_unaccent(pa.nom_estandar) ILIKE f_unaccent(%(q)s))"
     elif modo == "atc":
         where_busqueda = "EXISTS (SELECT 1 FROM med.identificado_por ip JOIN med.atc a ON ip.id_atc = a.id_atc WHERE ip.id_med = m.id_med AND a.code_atc ILIKE %(q)s)"
+    elif modo == "registro":
+        where_busqueda = "m.reg_pais ILIKE %(q)s"
     else:
         where_busqueda = """(
-            m.nom_comercial ILIKE %(q)s
-            OR EXISTS (SELECT 1 FROM med.contiene c JOIN med.principio_activo pa ON c.id_pa = pa.id_pa WHERE c.id_med = m.id_med AND pa.nom_estandar ILIKE %(q)s)
+            f_unaccent(m.nom_comercial) ILIKE f_unaccent(%(q)s)
+            OR m.reg_pais ILIKE %(q)s
+            OR EXISTS (SELECT 1 FROM med.contiene c JOIN med.principio_activo pa ON c.id_pa = pa.id_pa WHERE c.id_med = m.id_med AND f_unaccent(pa.nom_estandar) ILIKE f_unaccent(%(q)s))
             OR EXISTS (SELECT 1 FROM med.identificado_por ip JOIN med.atc a ON ip.id_atc = a.id_atc WHERE ip.id_med = m.id_med AND a.code_atc ILIKE %(q)s)
         )"""
 
@@ -67,15 +71,15 @@ def buscar_medicamentos(
         params["pais"] = [p.upper() for p in pais]
 
     if forma:
-        sql += " AND ff.descripcion ILIKE %(forma)s"
+        sql += " AND f_unaccent(ff.descripcion) ILIKE f_unaccent(%(forma)s)"
         params["forma"] = f"%{forma}%"
 
     if via:
-        sql += " AND va.descripcion ILIKE %(via)s"
+        sql += " AND f_unaccent(va.descripcion) ILIKE f_unaccent(%(via)s)"
         params["via"] = f"%{via}%"
 
     if laboratorio:
-        sql += " AND m.laboratorio ILIKE %(laboratorio)s"
+        sql += " AND f_unaccent(m.laboratorio) ILIKE f_unaccent(%(laboratorio)s)"
         params["laboratorio"] = f"%{laboratorio}%"
 
     sql += " ORDER BY m.nom_comercial LIMIT %(limit)s OFFSET %(offset)s"

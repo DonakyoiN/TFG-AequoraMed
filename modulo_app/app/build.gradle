@@ -36,6 +36,7 @@ android {
 
     buildFeatures {
         dataBinding true
+        viewBinding true
     }
 
     compileOptions {
@@ -65,8 +66,8 @@ dependencies {
     implementation libs.moshi
     implementation libs.moshi.kotlin
     ksp libs.moshi.kotlin.codegen
-    implementation libs.glide
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
+    androidTestImplementation libs.room.testing
 }

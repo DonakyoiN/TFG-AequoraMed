@@ -5,6 +5,7 @@ import esei.uvigo.es.tfg_donakyoin.viewmodel.*
 import esei.uvigo.es.tfg_donakyoin.*
 import esei.uvigo.es.tfg_donakyoin.utils.RecentSearchManager
 import android.os.Bundle
+import androidx.annotation.DrawableRes
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,9 @@ import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.search.SearchView
 
 class SearchFragment : Fragment() {
@@ -70,20 +74,38 @@ class SearchFragment : Fragment() {
         // Búsquedas Recientes
         setupBusquedasRecientes()
 
+        // Observer de Carga
+        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            val pb = binding.progressBar
+            pb.animate().cancel()
+            if (loading) {
+                pb.alpha = 0f
+                pb.visibility = View.VISIBLE
+                pb.animate().alpha(1f).setDuration(200).start()
+            } else {
+                pb.animate().alpha(0f).setDuration(200).withEndAction {
+                    pb.visibility = View.GONE
+                    pb.alpha = 1f
+                }.start()
+            }
+        }
+
         // Observer de los Medicamentos por ViewModel
         viewModel.medicamentos.observe(viewLifecycleOwner) { meds ->
             adapter.submitList(meds)
-            if (meds.isEmpty()) mostrarEstado("Sin resultados")
-            else mostrarLista()
+            if (meds.isEmpty()) {
+                if (viewModel.ultimaQuery.isEmpty()) mostrarEstado(getString(R.string.search_placeholder), R.drawable.ic_search_home)
+                else mostrarEstado(getString(R.string.search_no_results), R.drawable.ic_no_results)
+            } else mostrarLista()
         }
 
         // Observer de Errores
         viewModel.error.observe(viewLifecycleOwner) { error ->
-            if (error != null) mostrarEstado("Error: $error")
+            if (error != null) mostrarEstado(error, R.drawable.ic_search_error)
         }
 
         if (viewModel.medicamentos.value == null) {
-            mostrarEstado("Busca un medicamento para ver resultados")
+            mostrarEstado(getString(R.string.search_placeholder), R.drawable.ic_search_home)
         }
     }
 
@@ -101,12 +123,22 @@ class SearchFragment : Fragment() {
     }
 
     // Layout del filtrado
+    @androidx.annotation.OptIn(ExperimentalBadgeUtils::class)
     private fun setupFiltrado() {
         binding.searchBar.setOnMenuItemClickListener { item ->
             if (item.itemId == R.id.action_filter) {
                 findNavController().navigate(R.id.action_searchFragment_to_filterBottomSheet)
                 true
             } else false
+        }
+
+        // Badge indicador de filtros activos
+        val badge = BadgeDrawable.create(requireContext()).apply { isVisible = false }
+        binding.searchBar.post {
+            BadgeUtils.attachBadgeDrawable(badge, binding.searchBar, R.id.action_filter)
+        }
+        viewModel.filtrosActivos.observe(viewLifecycleOwner) { activos ->
+            badge.isVisible = activos
         }
     }
 
@@ -115,6 +147,8 @@ class SearchFragment : Fragment() {
         binding.searchView.addTransitionListener { _, _, newState ->
             if (newState == SearchView.TransitionState.SHOWN) {
                 refreshBusquedasRecientes()
+            } else if (newState == SearchView.TransitionState.HIDDEN) {
+                if (binding.searchBar.text.isBlank()) limpiarVista()
             }
         }
     }
@@ -143,10 +177,17 @@ class SearchFragment : Fragment() {
 
     // Búsqueda de Medicamentos
     private fun buscar() {
-        val q = binding.searchBar.text?.toString()?.trim() ?: return
-        if (q.isEmpty()) return
+        val q = binding.searchBar.text.toString().trim()
+        if (q.isEmpty()) { limpiarVista(); return }
+        if (q.length < 2) { mostrarEstado(getString(R.string.error_busqueda_corta), R.drawable.ic_no_results); return }
         recentSearches.addSearch(q)
         viewModel.buscarMedicamentos(q = q, modo = getModoSeleccionado())
+    }
+
+    // Limpia resultados y restaura el estado inicial
+    private fun limpiarVista() {
+        viewModel.limpiarBusqueda()
+        mostrarEstado(getString(R.string.search_placeholder), R.drawable.ic_search_home)
     }
 
     // Selección de Tipo de Búsqueda
@@ -154,6 +195,7 @@ class SearchFragment : Fragment() {
         R.id.chip_nombre -> "nombre"
         R.id.chip_atc -> "atc"
         R.id.chip_principio_activo -> "principio_activo"
+        R.id.chip_registro -> "registro"
         else -> "todo"
     }
 
@@ -161,10 +203,13 @@ class SearchFragment : Fragment() {
     private fun mostrarLista() {
         binding.rvMedicamentos.visibility = View.VISIBLE
         binding.tvEstado.visibility = View.GONE
+        binding.ivEstado.visibility = View.GONE
     }
 
     // Manejo de Visibilidad según el Estado
-    private fun mostrarEstado(mensaje: String) {
+    private fun mostrarEstado(mensaje: String, @DrawableRes iconRes: Int) {
+        binding.ivEstado.setImageResource(iconRes)
+        binding.ivEstado.visibility = View.VISIBLE
         binding.tvEstado.text = mensaje
         binding.tvEstado.visibility = View.VISIBLE
         binding.rvMedicamentos.visibility = View.GONE

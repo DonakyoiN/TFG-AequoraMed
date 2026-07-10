@@ -1,19 +1,8 @@
-import os
-from dotenv import load_dotenv
-import requests 
+import requests
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
-
-# Configuración DB
-load_dotenv()
-DB_CONFIG = {
-    "dbname": os.getenv("DB_NAME"),
-    "user": os.getenv("DB_USER"),    
-    "password": os.getenv("DB_PASS"),
-    "host": os.getenv("DB_HOST"),
-    "port": os.getenv("DB_PORT")
-}
+from scripts.database import DB_CONFIG
 
 def cargar_datos_canadamed():
 
@@ -84,7 +73,7 @@ def cargar_datos_canadamed():
     df_final = pd.DataFrame({
         'drug_code': df_filtered.get('drug_code', 'N/A'),
         'din': df_filtered.get('drug_identification_number', 'N/A'),
-        'atc_number': df_filtered.get('tc_atc_number', 'N/A'),
+        'atc_number': df_filtered['tc_atc_number'].apply(lambda x: x if len(str(x)) == 7 else 'N/A'),
         'ingredient_name': df_filtered.get('ingredient_name', 'N/A'),
         'brand_name': df_filtered.get('brand_name', 'N/A'),
         'company_name': df_filtered.get('company_name', 'N/A'),

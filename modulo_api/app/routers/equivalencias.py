@@ -47,13 +47,23 @@ def equivalencias_por_medicamento(
     limit: int = Query(default=100, ge=1, le=500, description="Máximo de resultados por país en cada lista"),
     db: connection = Depends(get_db),
 ):
-    # Detalles del Endpoint dentro del DocStrings
+    # Docstring en FastAPI
     """
     Devuelve equivalencias internacionales de un medicamento.
-    - por_atc: medicamentos de otros países que comparten código ATC (criterio primario).
-    - por_principio_activo: medicamentos de otros países que comparten principio activo
-      y no aparecen ya en por_atc (cubre países sin ATC asignado como Chile o Portugal).
-    El parámetro limit aplica por país, no sobre el total.
+
+    **por_atc**: medicamentos de otros países que comparten código ATC (criterio primario).
+    Incluye ATCs inferidos via `med.asociado_con` para medicamentos monocomponente de países
+    sin ATC propio (Chile, Portugal), usando España/CA/US como puente PA→ATC.
+
+    **por_principio_activo**: medicamentos que comparten principio activo y no aparecen ya
+    en `por_atc`. Combina dos rutas:
+    - **Directa**: mismo `id_pa` en `med.contiene` (cubre ES↔CL, CA↔PT, etc.).
+    - **Bridge inverso**: cuando el origen tiene ATCs directos y es monocomponente, busca
+      medicamentos cuyos PAs estén vinculados via `med.asociado_con` a esos mismos ATCs.
+      Cubre el caso ES/CA/US → CL/PT cuando el nombre INN difiere por idioma
+      (e.g. "Ibuprofen" en CA vs "Ibuprofeno" en CL). Solo destinos monocomponente.
+
+    El parámetro `limit` aplica por país, no sobre el total.
     """
     with db.cursor() as cur:
         # Datos del Medicamento Origen
@@ -81,10 +91,37 @@ def equivalencias_por_medicamento(
         )
         pa_ids = [row["id_pa"] for row in cur.fetchall()]
 
-        # --- Filtrado por Código ATC {ES, CA, US} ---
+        # Bridge forward: PA → ATC via asociado_con (CL/PT → CA/US/ES)
+        if pa_ids and len(pa_ids) == 1:
+            cur.execute(
+                """
+                SELECT DISTINCT ac.id_atc
+                FROM med.asociado_con ac
+                WHERE ac.id_pa = ANY(%s)
+                AND ac.id_atc IN (
+                    SELECT i.id_atc
+                    FROM med.identificado_por i
+                    WHERE i.id_med IN (
+                        SELECT id_med FROM med.contiene
+                        GROUP BY id_med HAVING COUNT(*) = 1
+                    )
+                    AND i.id_med IN (
+                        SELECT id_med FROM med.contiene WHERE id_pa = ANY(%s)
+                    )
+                )
+                """,
+                (pa_ids, pa_ids),
+            )
+            pa_derived_atcs = [r["id_atc"] for r in cur.fetchall() if r["id_atc"] not in atc_ids]
+        else:
+            pa_derived_atcs = []
+
+        all_atc_ids = atc_ids + pa_derived_atcs
+
+        # --- Filtrado por Código ATC (directo {ES, CA, US} + inferido via PA {CL, PT}) ---
         por_atc = []
         ids_por_atc = []
-        if atc_ids:
+        if all_atc_ids:
             sql_atc = (
                 _MED_SELECT
                 + """
@@ -94,20 +131,25 @@ def equivalencias_por_medicamento(
                   AND m.id_med != %(id_med)s
                 """
             )
-            params_atc: dict = {"atc_ids": atc_ids, "iso_origen": iso_origen, "id_med": id_med}
+            
+            params_atc: dict = {"atc_ids": all_atc_ids, "iso_origen": iso_origen, "id_med": id_med}
+
             if pais:
                 sql_atc += " AND p.iso_code = ANY(%(pais)s)"
                 params_atc["pais"] = [p.upper() for p in pais]
+
             sql_atc += " ORDER BY p.nom_pais, m.nom_comercial LIMIT %(cap)s"
             params_atc["cap"] = _SQL_CAP
             cur.execute(sql_atc, params_atc)
             all_atc_rows = cur.fetchall()
+
             # ids_por_atc incluye TODOS los matches ATC para excluirlos correctamente de por_pa
             ids_por_atc = [row["id_med"] for row in all_atc_rows]
             por_atc = [EquivalenciaResumen(**row) for row in _limit_per_country(all_atc_rows, limit)]
 
-        # --- Filtrado por Principio Activo {CL, PT} ---
-        por_pa = []
+        # --- Por Principio Activo (directo) ---
+        ids_por_pa: list = []
+        por_pa_rows: list = []
         if pa_ids:
             sql_pa = (
                 _MED_SELECT
@@ -118,17 +160,62 @@ def equivalencias_por_medicamento(
                   AND m.id_med != %(id_med)s
                 """
             )
+
             params_pa: dict = {"pa_ids": pa_ids, "iso_origen": iso_origen, "id_med": id_med}
+
             if ids_por_atc:
                 sql_pa += " AND m.id_med != ALL(%(ids_por_atc)s)"
                 params_pa["ids_por_atc"] = ids_por_atc
+
             if pais:
                 sql_pa += " AND p.iso_code = ANY(%(pais)s)"
                 params_pa["pais"] = [p.upper() for p in pais]
+
             sql_pa += " ORDER BY p.nom_pais, m.nom_comercial LIMIT %(cap)s"
             params_pa["cap"] = _SQL_CAP
             cur.execute(sql_pa, params_pa)
-            por_pa = [EquivalenciaResumen(**row) for row in _limit_per_country(cur.fetchall(), limit)]
+            por_pa_rows = cur.fetchall()
+            ids_por_pa = [row["id_med"] for row in por_pa_rows]
+
+        # --- Bridge inverso: ATC → asociado_con → PA (para ES/CA/US → CL/PT) ---
+        por_pa_inv_rows: list = []
+        if atc_ids and pa_ids and len(pa_ids) == 1:
+            sql_inv = (
+                _MED_SELECT
+                + """
+                JOIN med.contiene c ON m.id_med = c.id_med
+                JOIN med.asociado_con ac ON c.id_pa = ac.id_pa
+                WHERE ac.id_atc = ANY(%(atc_ids)s)
+                  AND p.iso_code != %(iso_origen)s
+                  AND m.id_med != %(id_med)s
+                  AND m.id_med IN (
+                      SELECT id_med FROM med.contiene
+                      GROUP BY id_med HAVING COUNT(*) = 1
+                  )
+                """
+            )
+            params_inv: dict = {"atc_ids": atc_ids, "iso_origen": iso_origen, "id_med": id_med}
+
+            if ids_por_atc:
+                sql_inv += " AND m.id_med != ALL(%(ids_por_atc)s)"
+                params_inv["ids_por_atc"] = ids_por_atc
+            if ids_por_pa:
+                sql_inv += " AND m.id_med != ALL(%(ids_por_pa)s)"
+                params_inv["ids_por_pa"] = ids_por_pa
+
+            if pais:
+                sql_inv += " AND p.iso_code = ANY(%(pais)s)"
+                params_inv["pais"] = [p.upper() for p in pais]
+
+            sql_inv += " ORDER BY p.nom_pais, m.nom_comercial LIMIT %(cap)s"
+            params_inv["cap"] = _SQL_CAP
+            cur.execute(sql_inv, params_inv)
+            por_pa_inv_rows = cur.fetchall()
+
+        por_pa = [
+            EquivalenciaResumen(**row)
+            for row in _limit_per_country(por_pa_rows + por_pa_inv_rows, limit)
+        ]
 
     return EquivalenciaResponse(
         medicamento_origen=MedicamentoResumen(**origen),

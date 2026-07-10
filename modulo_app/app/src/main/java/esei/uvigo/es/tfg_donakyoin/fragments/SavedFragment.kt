@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.graphics.Canvas
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -27,6 +29,8 @@ class SavedFragment : Fragment() {
     private val viewModel: MedViewModel by activityViewModels()
     // Adapter
     private lateinit var adapter: MedAdapter
+    // ItemTouchHelper
+    private lateinit var touchHelper: ItemTouchHelper
 
     // onCreateView para SavedFragment
     override fun onCreateView(
@@ -54,7 +58,7 @@ class SavedFragment : Fragment() {
         viewModel.cargarGuardados()
 
         viewModel.medicamentosGuardados.observe(viewLifecycleOwner) { meds ->
-            if (meds.isEmpty()) mostrarEstado("No tienes medicamentos guardados")
+            if (meds.isEmpty()) mostrarEstado(getString(R.string.saved_vacio), R.drawable.ic_saved_home)
             else {
                 adapter.submitList(meds)
                 mostrarLista()
@@ -86,12 +90,26 @@ class SavedFragment : Fragment() {
                 target: RecyclerView.ViewHolder
             ): Boolean = false
 
-            // Deslizar a la izquierda: Eliminar
+            // Deslizar a la izquierda: Eliminar con opción de Deshacer
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.bindingAdapterPosition
                 val med = adapter.currentList.getOrNull(position) ?: return
-                viewModel.eliminarMed(med.id_med)
-                Snackbar.make(binding.rvGuardados, "Medicamento eliminado de guardados", Snackbar.LENGTH_SHORT).show()
+                val filtered = adapter.currentList.filter { it.id_med != med.id_med }
+                adapter.submitList(filtered)
+                if (filtered.isEmpty()) mostrarEstado(getString(R.string.saved_vacio), R.drawable.ic_saved_home)
+                Snackbar.make(binding.rvGuardados, getString(R.string.snack_eliminado), 1000)
+                    .setAnchorView(requireActivity().findViewById(R.id.bottom_nav))
+                    .setAction(getString(R.string.snack_deshacer)) {
+                        touchHelper.attachToRecyclerView(null)
+                        viewModel.cargarGuardados()
+                        touchHelper.attachToRecyclerView(binding.rvGuardados)
+                    }
+                    .addCallback(object : com.google.android.material.snackbar.Snackbar.Callback() {
+                        override fun onDismissed(snackbar: com.google.android.material.snackbar.Snackbar, event: Int) {
+                            if (event != DISMISS_EVENT_ACTION) viewModel.eliminarMed(med.id_med)
+                        }
+                    })
+                    .show()
             }
 
             // Limpia posición al soltar
@@ -134,18 +152,24 @@ class SavedFragment : Fragment() {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
         })
+        touchHelper = helper
         helper.attachToRecyclerView(binding.rvGuardados)
     }
 
+    // Mostrar lista de guardados
     private fun mostrarLista() {
-        binding.rvGuardados.visibility = View.VISIBLE
-        binding.tvEstado.visibility = View.GONE
+        binding.rvGuardados.isVisible = true
+        binding.tvEstado.isVisible = false
+        binding.ivEstado.isVisible = false
     }
 
-    private fun mostrarEstado(mensaje: String) {
+    // Mostrar ícono Vacío
+    private fun mostrarEstado(mensaje: String, @DrawableRes iconRes: Int) {
+        binding.ivEstado.setImageResource(iconRes)
+        binding.ivEstado.isVisible = true
         binding.tvEstado.text = mensaje
-        binding.tvEstado.visibility = View.VISIBLE
-        binding.rvGuardados.visibility = View.GONE
+        binding.tvEstado.isVisible = true
+        binding.rvGuardados.isVisible = false
     }
 
     // onDestroyView para limpieza de Vista

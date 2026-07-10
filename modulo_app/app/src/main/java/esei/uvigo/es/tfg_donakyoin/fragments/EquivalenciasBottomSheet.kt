@@ -4,7 +4,9 @@ import esei.uvigo.es.tfg_donakyoin.databinding.BottomSheetEquivalenciasBinding
 import esei.uvigo.es.tfg_donakyoin.models.EquivalenciaResumenDto
 import esei.uvigo.es.tfg_donakyoin.viewmodel.*
 import esei.uvigo.es.tfg_donakyoin.*
+import esei.uvigo.es.tfg_donakyoin.utils.paisResIdFor
 import android.os.Bundle
+import androidx.annotation.DrawableRes
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.View
@@ -53,18 +55,32 @@ class EquivalenciasBottomSheet : BottomSheetDialogFragment() {
 
         // Observer de Carga
         viewModel.isLoadingEquiv.observe(viewLifecycleOwner) { loading ->
-            binding.progressEquivalencias.isVisible = loading
+            val pb = binding.progressEquivalencias
+            pb.animate().cancel()
+            if (loading) {
+                pb.alpha = 0f
+                pb.visibility = View.VISIBLE
+                pb.animate().alpha(1f).setDuration(200).start()
+            } else {
+                pb.animate().alpha(0f).setDuration(200).withEndAction {
+                    pb.visibility = View.GONE
+                    pb.alpha = 1f
+                }.start()
+            }
+        }
+
+        // Observer de Errores de Equivalencias
+        viewModel.errorEquiv.observe(viewLifecycleOwner) { error ->
+            if (error != null) mostrarVacio(error, R.drawable.ic_search_error)
         }
 
         // Observer de Equivalencias
         viewModel.equivalencias.observe(viewLifecycleOwner) { equiv ->
             if (equiv == null) return@observe
-            val todos = equiv.por_atc.map { it.copy(tipo_equivalencia = "Equivalencia por ATC") } +
-                        equiv.por_principio_activo.map { it.copy(tipo_equivalencia = "Equivalencia por Principio Activo") }
+            val todos = equiv.por_atc.map { it.copy(tipo_equivalencia = getString(R.string.equiv_tipo_atc)) } +
+                        equiv.por_principio_activo.map { it.copy(tipo_equivalencia = getString(R.string.equiv_tipo_principio)) }
             if (todos.isEmpty()) {
-                binding.tvEmpty.text = "No se encontraron equivalencias"
-                binding.tvEmpty.isVisible = true
-                binding.rvEquivalencias.isVisible = false
+                mostrarVacio(getString(R.string.equiv_vacio), R.drawable.ic_no_results_equiv)
             } else {
                 configurarChips(todos)
                 mostrarSeleccionPais()
@@ -74,7 +90,7 @@ class EquivalenciasBottomSheet : BottomSheetDialogFragment() {
 
     // Configuración de Chips de Países
     private fun configurarChips(lista: List<EquivalenciaResumenDto>) {
-        val paises = lista.map { it.iso_code to it.nom_pais }.distinctBy { it.first }
+        val paises = lista.map { it.iso_code to (paisResIdFor(it.iso_code)?.let { id -> getString(id) } ?: it.nom_pais) }.distinctBy { it.first }
         binding.chipGroupPaises.removeAllViews()
 
         paises.forEach { (iso, nombre) ->
@@ -101,20 +117,34 @@ class EquivalenciasBottomSheet : BottomSheetDialogFragment() {
         }
 
         val todos = viewModel.equivalencias.value?.let {
-            it.por_atc.map { med -> med.copy(tipo_equivalencia = "Equivalencia por ATC") } +
-            it.por_principio_activo.map { med -> med.copy(tipo_equivalencia = "Equivalencia por Principio Activo") }
+            it.por_atc.map { med -> med.copy(tipo_equivalencia = getString(R.string.equiv_tipo_atc)) } +
+            it.por_principio_activo.map { med -> med.copy(tipo_equivalencia = getString(R.string.equiv_tipo_principio)) }
         } ?: return
 
         val filtrados = todos.filter { it.iso_code in seleccionados }
-        binding.tvEmpty.text = "No se encontraron equivalencias"
-        binding.tvEmpty.isVisible = filtrados.isEmpty()
-        binding.rvEquivalencias.isVisible = filtrados.isNotEmpty()
+        if (filtrados.isEmpty()) mostrarVacio(getString(R.string.equiv_vacio), R.drawable.ic_no_results_equiv)
+        else {
+            binding.tvEmpty.isVisible = false
+            binding.ivEmpty.isVisible = false
+            binding.rvEquivalencias.isVisible = true
+        }
         adapter.submitList(filtrados)
     }
 
-    // Estado inicial: ningún país seleccionado
+    // Muestra ícono + texto de estado vacío
+    private fun mostrarVacio(mensaje: String, @DrawableRes iconRes: Int) {
+        binding.ivEmpty.setImageResource(iconRes)
+        binding.ivEmpty.isVisible = true
+        binding.tvEmpty.text = mensaje
+        binding.tvEmpty.isVisible = true
+        binding.rvEquivalencias.isVisible = false
+    }
+
+    // Estado inicial: Ningún país seleccionado
     private fun mostrarSeleccionPais() {
-        binding.tvEmpty.text = "Selecciona un país para ver las equivalencias disponibles"
+        binding.ivEmpty.setImageResource(R.drawable.ic_equiv_home)
+        binding.ivEmpty.isVisible = true
+        binding.tvEmpty.text = getString(R.string.equiv_selecciona_pais)
         binding.tvEmpty.isVisible = true
         binding.rvEquivalencias.isVisible = false
         adapter.submitList(emptyList())

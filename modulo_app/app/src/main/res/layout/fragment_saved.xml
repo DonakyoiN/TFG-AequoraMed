@@ -12,13 +12,13 @@
             android:id="@+id/tv_titulo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_saved"
-            android:paddingVertical="8dp"
-            android:paddingHorizontal="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:text="Medicamentos Guardados"
+            android:background="@drawable/bg_label"
+            android:paddingVertical="@dimen/spacing_sm"
+            android:paddingHorizontal="@dimen/spacing_lg"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_marginEnd="@dimen/spacing_md"
+            android:text="@string/saved_titulo"
             android:textAllCaps="true"
             android:textAppearance="?attr/textAppearanceTitleSmall"
             android:textColor="@color/white"
@@ -33,24 +33,45 @@
             android:id="@+id/rv_guardados"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/saved_list_margin_top"
+            android:padding="@dimen/spacing_sm"
+            android:clipToPadding="false"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_titulo" />
 
+        <!-- Ícono de Estado Vacío -->
+        <ImageView
+            android:id="@+id/iv_estado"
+            android:layout_width="@dimen/estado_icon_size"
+            android:layout_height="@dimen/estado_icon_size"
+            android:layout_marginBottom="@dimen/spacing_md"
+            android:visibility="gone"
+            app:tint="?attr/colorOnSurfaceVariant"
+            app:layout_constraintBottom_toTopOf="@id/tv_estado"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_titulo"
+            app:layout_constraintVertical_bias="0.4"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <!-- Texto de Estado Vacío -->
         <TextView
             android:id="@+id/tv_estado"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/spacing_2xl"
+            android:paddingTop="@dimen/spacing_sm"
+            android:gravity="center"
             android:visibility="gone"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnSurfaceVariant"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_titulo" />
+            app:layout_constraintTop_toBottomOf="@id/iv_estado" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

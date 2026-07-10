@@ -1,3 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- App -->
     <string name="app_name">AequoraMed</string>
+
+    <!-- SearchFragment -->
+    <string name="search_hint">Buscar medicamento...</string>
+    <string name="search_no_results">Sin Resultados</string>
+    <string name="search_placeholder">Busca un medicamento para ver resultados</string>
+    <string name="search_recent">Búsquedas recientes</string>
+    <string name="search_modo_todo">Todo</string>
+    <string name="search_modo_nombre">Nombre Comercial</string>
+    <string name="search_modo_atc">Código ATC</string>
+    <string name="search_modo_principio">Principio Activo</string>
+    <string name="search_modo_registro">Nº Registro</string>
+    <string name="search_eliminar_cd">Eliminar búsqueda</string>
+
+    <!-- FilterBottomSheet -->
+    <string name="filter_titulo">Filtros de Búsqueda</string>
+    <string name="filter_limpiar">Limpiar</string>
+    <string name="filter_pais">País</string>
+    <string name="filter_forma">Forma Farmacéutica</string>
+    <string name="filter_via">Vía de Administración</string>
+    <string name="filter_laboratorio">Laboratorio</string>
+    <string name="filter_aplicar">Aplicar Filtros</string>
+
+    <!-- DetailFragment / LocalDetailFragment -->
+    <string name="detalle_laboratorio">Laboratorio</string>
+    <string name="detalle_pais">País</string>
+    <string name="detalle_forma">Forma farmacéutica</string>
+    <string name="detalle_via">Vía de administración</string>
+    <string name="detalle_dosaje">Dosajes disponibles</string>
+    <string name="detalle_atc">Código ATC</string>
+    <string name="detalle_principios">Principios Activos</string>
+    <string name="detalle_equivalencias_cd">Equivalencias Farmacéuticas</string>
+
+    <!-- Snackbars -->
+    <string name="snack_guardado">Medicamento Guardado</string>
+    <string name="snack_eliminado">Medicamento Eliminado</string>
+    <string name="snack_deshacer">Deshacer</string>
+
+    <!-- NavBar -->
+    <string name="navbar_busqueda">Búsqueda</string>
+    <string name="navbar_guardado">Guardados</string>
+    <string name="navbar_ajustes">Ajustes</string>
+
+    <!-- SavedFragment -->
+    <string name="saved_titulo">Medicamentos Guardados</string>
+    <string name="saved_vacio">Lista vacía.\n Guarda un medicamento para tenerlo a tu disposición.</string>
+
+    <!-- SettingsFragment -->
+    <string name="settings_titulo">Ajustes</string>
+    <string name="settings_apariencia">Apariencia</string>
+    <string name="settings_tema">Tema</string>
+    <string name="settings_idioma">Idioma</string>
+    <string name="settings_idioma_es">Español</string>
+    <string name="settings_idioma_en">Inglés</string>
+
+    <!-- EquivalenciasBottomSheet -->
+    <string name="equiv_titulo">Equivalencias Farmacéuticas</string>
+    <string name="equiv_vacio">No se han encontrado equivalencias farmacéuticas</string>
+    <string name="equiv_selecciona_pais">Selecciona un país para ver las equivalencias disponibles</string>
+    <string name="equiv_tipo_atc">Equivalencia por ATC</string>
+    <string name="equiv_tipo_principio">Equivalencia por Principio Activo</string>
+
+    <!-- Acerca de -->
+    <string name="about_titulo">Acerca de</string>
+    <string name="about_descripcion">Aplicación de equivalencias farmacéuticas internacional</string>
+    <string name="about_autor">Marcelo Antonio Veliz Ossandon · 2026</string>
+    <string name="about_code">TFG EI 25/26–123</string>
+    <string name="about_disclaimer_titulo">Aviso</string>
+    <string name="about_disclaimer">Las equivalencias mostradas son farmacéuticas y no implican bioequivalencia ni intercambiabilidad clínica.</string>
+
+    <!-- Errores -->
+    <string name="error_sin_conexion">Sin conexión a Internet. Comprueba tu red e inténtalo de nuevo.</string>
+    <string name="error_timeout">El servidor tardó demasiado en responder. Inténtalo de nuevo.</string>
+    <string name="error_servidor">Error en el servidor. Inténtalo más tarde.</string>
+    <string name="error_generico">Ha ocurrido un error inesperado. Inténtalo de nuevo.</string>
+    <string name="error_equivalencias">No se pudieron cargar las equivalencias. Comprueba tu conexión.</string>
+    <string name="error_busqueda_corta">Introduce al menos 2 caracteres para buscar.</string>
+
+    <!-- Países -->
+    <string name="pais_es">España</string>
+    <string name="pais_cl">Chile</string>
+    <string name="pais_pt">Portugal</string>
+    <string name="pais_us">Estados Unidos</string>
+    <string name="pais_ca">Canadá</string>
+
+    <!-- CountryUtils -->
+    <string name="registro_canada">Drug Identification Number (DIN)</string>
+    <string name="registro_usa">Application Number</string>
+    <string name="registro_default">Nº Registro</string>
+
 </resources>

@@ -1,4 +1,5 @@
 package esei.uvigo.es.tfg_donakyoin.viewmodel
+import esei.uvigo.es.tfg_donakyoin.R
 import esei.uvigo.es.tfg_donakyoin.database.MedDb
 import esei.uvigo.es.tfg_donakyoin.models.*
 import esei.uvigo.es.tfg_donakyoin.network.RetrofitClient
@@ -9,6 +10,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class MedViewModel(app: Application) : AndroidViewModel(app) {
 
@@ -44,6 +48,10 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     private val _detalle = MutableLiveData<MedicamentoDetalleDto?>()
     val detalle: LiveData<MedicamentoDetalleDto?> = _detalle
 
+    // Indicador de filtros activos
+    private val _filtrosActivos = MutableLiveData(false)
+    val filtrosActivos: LiveData<Boolean> = _filtrosActivos
+
     // Equivalencias de Medicamento
     private val _equivalencias = MutableLiveData<EquivalenciaDto?>()
     val equivalencias: LiveData<EquivalenciaDto?> = _equivalencias
@@ -52,13 +60,17 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
-    // Estado de Carga - Equivalencias
+    // Estado de Carga en Equivalencias
     private val _isLoadingEquiv = MutableLiveData(false)
     val isLoadingEquiv: LiveData<Boolean> = _isLoadingEquiv
 
     // Error
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
+
+    // Error - Equivalencias
+    private val _errorEquiv = MutableLiveData<String?>()
+    val errorEquiv: LiveData<String?> = _errorEquiv
 
     // Medicamentos Guardados
     private val _medicamentosGuardados = MutableLiveData<List<MedicamentoDto>>()
@@ -79,7 +91,7 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
                 .onFailure {
                     val local = repository.getDetalleGuardado(idMed)
                     if (local != null) _detalle.value = local
-                    else _error.value = it.message
+                    else _error.value = mapError(it)
                 }
             _isLoading.value = false
         }
@@ -157,6 +169,7 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
 
     // Búsqueda con Filtrado Avanzado
     fun busquedaFiltro() {
+        _filtrosActivos.value = paisesActivo.isNotEmpty() || formaActiva != null || viaActiva != null || laboratorioActivo != null
         if (ultimaQuery.isEmpty()) return
         viewModelScope.launch {
             _isLoading.value = true
@@ -170,19 +183,27 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
                 laboratorioActivo
             )
                 .onSuccess { _medicamentos.value = it }
-                .onFailure { _error.value = it.message }
+                .onFailure { _error.value = mapError(it) }
             _isLoading.value = false
         }
+    }
+
+    // Limpia los resultados de búsqueda
+    fun limpiarBusqueda() {
+        _medicamentos.value = emptyList()
+        ultimaQuery = ""
+        _error.value = null
     }
 
     // Carga de Equivalencias de un Medicamento
     fun cargarEquivalencias(idMed: Int) {
         viewModelScope.launch {
             _equivalencias.value = null
+            _errorEquiv.value = null
             _isLoadingEquiv.value = true
             repository.getEquivalencias(idMed)
                 .onSuccess { _equivalencias.value = it }
-                .onFailure { _error.value = it.message }
+                .onFailure { _errorEquiv.value = mapError(it) }
             _isLoadingEquiv.value = false
         }
     }
@@ -194,6 +215,17 @@ class MedViewModel(app: Application) : AndroidViewModel(app) {
             repository.getFormasFarmaceuticas().onSuccess { _formas.value = it }
             repository.getViasAdministracion().onSuccess { _vias.value = it }
         }
+    }
+
+    // Mapeo de Errores
+    private fun mapError(e: Throwable): String = when (e) {
+        is UnknownHostException   -> getApplication<Application>().getString(R.string.error_sin_conexion)
+        is SocketTimeoutException -> getApplication<Application>().getString(R.string.error_timeout)
+        is HttpException          -> when (e.code()) {
+            422  -> getApplication<Application>().getString(R.string.error_busqueda_corta)
+            else -> getApplication<Application>().getString(R.string.error_servidor)
+        }
+        else                      -> getApplication<Application>().getString(R.string.error_generico)
     }
 
 }

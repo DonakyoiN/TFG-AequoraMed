@@ -2,17 +2,18 @@ import os
 import psycopg2
 from dotenv import load_dotenv
 
-# Config de la DB auxiliar para los script de carga de datos
+# Configuración DB para los scripts de extracción y carga de datos 
 
-dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
+dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env'))
 load_dotenv(dotenv_path)
 
 DB_CONFIG = {
     "dbname": os.getenv("DB_NAME"),
-    "user": os.getenv("DB_USER"),    
+    "user": os.getenv("DB_USER"),
     "password": os.getenv("DB_PASS"),
     "host": os.getenv("DB_HOST"),
-    "port": os.getenv("DB_PORT")
+    "port": os.getenv("DB_PORT"),
+    "sslmode": os.getenv("DB_SSLMODE", "prefer")
 }
 
 def get_connection():

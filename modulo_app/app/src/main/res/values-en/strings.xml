@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App -->
+    <string name="app_name">AequoraMed</string>
+
+    <!-- SearchFragment -->
+    <string name="search_hint">Search a medication...</string>
+    <string name="search_no_results">No Results</string>
+    <string name="search_placeholder">Search a medication for viewing results</string>
+    <string name="search_recent">Recent searches</string>
+    <string name="search_modo_todo">All</string>
+    <string name="search_modo_nombre">Commercial Name</string>
+    <string name="search_modo_atc">ATC Code</string>
+    <string name="search_modo_principio">Active Ingredient</string>
+    <string name="search_modo_registro">Reg. Number</string>
+    <string name="search_eliminar_cd">Delete search</string>
+
+    <!-- FilterBottomSheet -->
+    <string name="filter_titulo">Search Filters</string>
+    <string name="filter_limpiar">Clear</string>
+    <string name="filter_pais">Country</string>
+    <string name="filter_forma">Pharmaceutical Form</string>
+    <string name="filter_via">Route of administration</string>
+    <string name="filter_laboratorio">Laboratory</string>
+    <string name="filter_aplicar">Apply Filters</string>
+
+    <!-- DetailFragment / LocalDetailFragment -->
+    <string name="detalle_laboratorio">Laboratory</string>
+    <string name="detalle_pais">Country</string>
+    <string name="detalle_forma">Pharmaceutical Form</string>
+    <string name="detalle_via">Route of administration</string>
+    <string name="detalle_dosaje">Dosage available</string>
+    <string name="detalle_atc">ATC Code</string>
+    <string name="detalle_principios">Active Ingredients</string>
+    <string name="detalle_equivalencias_cd">Pharmaceutical Equivalences</string>
+
+    <!-- Snackbars -->
+    <string name="snack_guardado">Medication Saved</string>
+    <string name="snack_eliminado">Medication Deleted</string>
+    <string name="snack_deshacer">Undo</string>
+
+    <!-- NavBar -->
+    <string name="navbar_busqueda">Search</string>
+    <string name="navbar_guardado">Saved</string>
+    <string name="navbar_ajustes">Settings</string>
+
+    <!-- SavedFragment -->
+    <string name="saved_titulo">Saved Medications</string>
+    <string name="saved_vacio">Empty list.\n Save a medication to have it at your disposal.</string>
+
+    <!-- SettingsFragment -->
+    <string name="settings_titulo">Settings</string>
+    <string name="settings_apariencia">Appearance</string>
+    <string name="settings_tema">Theme</string>
+    <string name="settings_idioma">Language</string>
+    <string name="settings_idioma_es">Spanish</string>
+    <string name="settings_idioma_en">English</string>
+
+    <!-- Acerca de -->
+    <string name="about_titulo">About</string>
+    <string name="about_descripcion">International pharmaceutical equivalence application</string>
+    <string name="about_autor">Marcelo Antonio Veliz Ossandon · 2026</string>
+    <string name="about_code">TFG EI 25/26–123</string>
+    <string name="about_disclaimer_titulo">Notice</string>
+    <string name="about_disclaimer">Shown equivalences are pharmaceutical and do not imply bioequivalence or clinical interchangeability.</string>
+
+    <!-- EquivalenciasBottomSheet -->
+    <string name="equiv_titulo">Pharmaceutical Equivalences</string>
+    <string name="equiv_vacio">No pharmaceutical equivalences found</string>
+    <string name="equiv_selecciona_pais">Select a country to see available equivalences</string>
+    <string name="equiv_tipo_atc">ATC Equivalence</string>
+    <string name="equiv_tipo_principio">Active Ingredient Equivalence</string>
+
+    <!-- Errors -->
+    <string name="error_sin_conexion">No Internet connection. Check your network and try again.</string>
+    <string name="error_timeout">The server took too long to respond. Please try again.</string>
+    <string name="error_servidor">Server error. Please try again later.</string>
+    <string name="error_generico">An unexpected error occurred. Please try again.</string>
+    <string name="error_equivalencias">Could not load equivalences. Check your connection.</string>
+    <string name="error_busqueda_corta">Enter at least 2 characters to search.</string>
+
+    <!-- Países -->
+    <string name="pais_es">Spain</string>
+    <string name="pais_cl">Chile</string>
+    <string name="pais_pt">Portugal</string>
+    <string name="pais_us">United States</string>
+    <string name="pais_ca">Canada</string>
+
+    <!-- CountryUtils -->
+    <string name="registro_canada">Drug Identification Number (DIN)</string>
+    <string name="registro_usa">Application Number</string>
+    <string name="registro_default">Registration Number</string>
+
+</resources>

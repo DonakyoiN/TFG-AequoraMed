@@ -12,17 +12,17 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="4dp"
-        app:cardCornerRadius="12dp"
+        android:layout_marginHorizontal="@dimen/spacing_lg"
+        android:layout_marginVertical="@dimen/spacing_xs"
+        app:cardCornerRadius="@dimen/card_corner_radius"
         app:cardElevation="0dp"
         app:strokeColor="?attr/colorOutlineVariant"
-        app:strokeWidth="1dp">
+        app:strokeWidth="@dimen/card_stroke_width">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="@dimen/spacing_lg">
 
             <TextView
                 android:id="@+id/tv_nombre_comercial"
@@ -39,9 +39,9 @@
 
             <ImageView
                 android:id="@+id/iv_bandera"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
+                android:layout_width="@dimen/icon_size_lg"
+                android:layout_height="@dimen/icon_size_lg"
+                android:layout_marginStart="@dimen/spacing_sm"
                 android:scaleType="fitCenter"
                 android:contentDescription="@{med.nom_pais}"
                 app:layout_constraintTop_toTopOf="parent"
@@ -51,7 +51,7 @@
                 android:id="@+id/tv_laboratorio"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/item_lab_margin_top"
                 android:text="@{med.laboratorio ?? ``}"
                 android:visibility="@{med.laboratorio != null ? View.VISIBLE : View.GONE}"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
@@ -64,8 +64,8 @@
                 android:id="@+id/tv_forma"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                app:layout_goneMarginTop="6dp"
+                android:layout_marginTop="@dimen/item_forma_margin_top"
+                app:layout_goneMarginTop="@dimen/item_forma_margin_top"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 app:layout_constraintEnd_toEndOf="parent"

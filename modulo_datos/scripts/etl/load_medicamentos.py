@@ -1,7 +1,6 @@
-import sys
-import os
 import re
-from db_conn import get_connection
+from psycopg2.extras import execute_values
+from scripts.database import get_connection
 
 # Carga de los países, vías de administración y forma farmacéutica
 def load_catalog_maps(cursor):
@@ -41,10 +40,7 @@ def insert_spain(cursor, dict_pais, dict_forma, dict_via):
         to_insert.append((id_pais, str(reg_pais), nom, lab, dosaje, id_f, id_v))
 
     if to_insert:
-        cursor.executemany("""
-            INSERT INTO med.medicamento (id_pais, reg_pais, nom_comercial, laboratorio, dosaje, id_forma, id_via)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, to_insert)
+        execute_values(cursor, "INSERT INTO med.medicamento (id_pais, reg_pais, nom_comercial, laboratorio, dosaje, id_forma, id_via) VALUES %s", to_insert)
 
 # Carga de datos de ISPCh Chile
 def insert_chile(cursor, dict_pais):
@@ -63,10 +59,7 @@ def insert_chile(cursor, dict_pais):
         to_insert.append((id_pais, str(reg_pais), nom, lab, None, None, None))
 
     if to_insert:
-        cursor.executemany("""
-            INSERT INTO med.medicamento (id_pais, reg_pais, nom_comercial, laboratorio, dosaje, id_forma, id_via)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, to_insert)
+        execute_values(cursor, "INSERT INTO med.medicamento (id_pais, reg_pais, nom_comercial, laboratorio, dosaje, id_forma, id_via) VALUES %s", to_insert)
 
 # Carga de datos de CanadaHealth Canadá
 def insert_canada(cursor, dict_pais, dict_forma, dict_via):
@@ -90,10 +83,7 @@ def insert_canada(cursor, dict_pais, dict_forma, dict_via):
         to_insert.append((id_pais, str(reg_pais), nom, lab, dosaje, id_f, id_v))
 
     if to_insert:
-        cursor.executemany("""
-            INSERT INTO med.medicamento (id_pais, reg_pais, nom_comercial, laboratorio, dosaje, id_forma, id_via)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, to_insert)
+        execute_values(cursor, "INSERT INTO med.medicamento (id_pais, reg_pais, nom_comercial, laboratorio, dosaje, id_forma, id_via) VALUES %s", to_insert)
 
 # Carga de datos RxNorm+DrugsFDA Estados Unidos
 def insert_usa(cursor, dict_pais, dict_forma, dict_via):
@@ -120,10 +110,7 @@ def insert_usa(cursor, dict_pais, dict_forma, dict_via):
         to_insert.append((id_pais, str(reg_pais), nom, lab, dosaje, id_f, id_v))
 
     if to_insert:
-        cursor.executemany("""
-            INSERT INTO med.medicamento (id_pais, reg_pais, nom_comercial, laboratorio, dosaje, id_forma, id_via)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, to_insert)
+        execute_values(cursor, "INSERT INTO med.medicamento (id_pais, reg_pais, nom_comercial, laboratorio, dosaje, id_forma, id_via) VALUES %s", to_insert)
 
 # Carga de datos de Infamed Portugal
 def insert_portugal(cursor, dict_pais, dict_forma):
@@ -144,10 +131,7 @@ def insert_portugal(cursor, dict_pais, dict_forma):
         to_insert.append((id_pais, str(reg_pais), nom.upper() if nom else nom, lab, dosaje, id_f, None))
 
     if to_insert:
-        cursor.executemany("""
-            INSERT INTO med.medicamento (id_pais, reg_pais, nom_comercial, laboratorio, dosaje, id_forma, id_via)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, to_insert)
+        execute_values(cursor, "INSERT INTO med.medicamento (id_pais, reg_pais, nom_comercial, laboratorio, dosaje, id_forma, id_via) VALUES %s", to_insert)
 
 def main():
     conn = get_connection()
