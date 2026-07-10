@@ -261,6 +261,13 @@ La documentación interactiva (Swagger UI) en `http://localhost:8000/docs`.
 > ```
 > Esto es muy común si tienes extensiones de Java en Visual Studio Code.
 
+### 5. Instalación directa
+Si solo deseas probar la aplicación en un dispositivo Android o emulador sin necesidad de compilar el código fuente:
+
+1. Copia el archivo `Distribuibles/AequoraMed.apk` en tu dispositivo o arrástralo al emulador.
+2. Ejecútalo e instálalo (asegúrate de permitir la instalación desde orígenes desconocidos si el sistema lo solicita).
+
+> **Nota:** Esta versión del APK está preconfigurada para comunicarse directamente con la API desplegada en Render. Funcionará al instante siempre que el dispositivo tenga acceso a Internet y que el **servicio esté encendido** en Render, sin necesidad de configurar bases de datos ni levantar servidores locales.
 ---
 
 ## Despliegue en Render
