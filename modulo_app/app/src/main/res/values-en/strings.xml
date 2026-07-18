@@ -60,8 +60,7 @@
     <!-- Acerca de -->
     <string name="about_titulo">About</string>
     <string name="about_descripcion">International pharmaceutical equivalence application</string>
-    <string name="about_autor">Marcelo Antonio Veliz Ossandon · 2026</string>
-    <string name="about_code">TFG EI 25/26–123</string>
+    <string name="about_autor">DonakyoiN · 2026</string>
     <string name="about_disclaimer_titulo">Notice</string>
     <string name="about_disclaimer">Shown equivalences are pharmaceutical and do not imply bioequivalence or clinical interchangeability.</string>
 

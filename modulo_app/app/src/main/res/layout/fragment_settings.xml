@@ -161,7 +161,7 @@
                     android:textAppearance="?attr/textAppearanceLabelMedium"
                     android:textColor="?attr/colorOnSurfaceVariant" />
 
-                <!-- Bloque 1: Identidad -->
+                <!-- Identidad -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -201,15 +201,7 @@
 
                 </LinearLayout>
 
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/divider_height"
-                    android:layout_marginTop="@dimen/spacing_md"
-                    android:layout_marginBottom="@dimen/spacing_md"
-                    android:background="?attr/colorOutlineVariant" />
-
-                <!-- Bloque 2: Autoría -->
+                <!-- Autoría -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -217,15 +209,6 @@
                     android:textAppearance="?attr/textAppearanceBodySmall"
                     android:textColor="?attr/colorOnSurfaceVariant" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_xs"
-                    android:text="@string/about_code"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textStyle="bold" />
-
                 <!-- Divider -->
                 <View
                     android:layout_width="match_parent"
@@ -234,7 +217,7 @@
                     android:layout_marginBottom="@dimen/spacing_md"
                     android:background="?attr/colorOutlineVariant" />
 
-                <!-- Bloque 3: Aviso legal -->
+                <!-- Aviso legal -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -1,128 +1,94 @@
-# TFG - Desarrollo de una Aplicación de Equivalencias Farmacéuticas Internacional
+# AequoraMed
 
-Aplicación móvil Android para consultar medicamentos de cinco países (España, Chile, Portugal, Canadá y Estados Unidos) y obtener sus equivalencias internacionales a partir de datos oficiales de las agencias reguladoras. Las correspondencias se establecen por **código ATC** y **principio activo**.
+[![Android](https://img.shields.io/badge/Platform-Android%208.0%2B-brightgreen)](https://developer.android.com)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-purple)](https://kotlinlang.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.136-009688)](https://fastapi.tiangolo.com)
+[![Python](https://img.shields.io/badge/Python-3.14-blue)](https://python.org)
+[![License](https://img.shields.io/github/license/DonakyoiN/TFG-AequoraMed)](LICENSE)
 
-Trabajo de Fin de Grado — Grado en Ingeniería Informática  
-Escola Superior de Enxeñaría Informática, Universidade de Vigo. Curso 2025/2026.  
-**Autor:** Marcelo Antonio Véliz Ossandón
-**Código TFG**: EI 25/26-123
+**AequoraMed** es una aplicación móvil Android que permite buscar medicamentos registrados en **España, Chile, Portugal, Canadá y Estados Unidos** y encontrar sus equivalencias internacionales a partir de datos oficiales de las agencias reguladoras de cada país.
+
+Trabajo de Fin de Grado 25/26 — Escola Superior de Enxeñaría Informática, Universidade de Vigo.
+
+**Autor:** [@DonakyoiN](https://github.com/DonakyoiN)
+
+> **Nota:** Las equivalencias que muestra AequoraMed son **correspondencias informativas** basadas en **código ATC** y **principio activo**. No son bioequivalencias ni sustituyen el criterio de un profesional sanitario.
+
 ---
 
-## Contenido del directorio
+## Capturas
 
-El directorio de entrega tiene la siguiente estructura raíz:
+Búsqueda de medicamentos por nombre en cinco países, ficha completa con código ATC y principios activos, y equivalencias internacionales filtradas por país destino.
+
+<p align="center">
+  <img src="assets/screenshots/Screenshot_Busqueda_Med.jpg" width="220" alt="Búsqueda">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/screenshots/Screenshot_Detalle_Med.jpg" width="220" alt="Detalle de medicamento">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/screenshots/Screenshot_Equivalencia_Med.jpg" width="220" alt="Equivalencias internacionales">
+</p>
+
+---
+
+## Arquitectura
+
+El proyecto se divide en tres módulos independientes que colaboran entre sí:
+
+<p align="center">
+  <img src="assets/screenshots/TFG_ArquitecturaSistema.png" alt="Arquitectura del sistema">
+</p>
+
+| Módulo | Tecnología | Responsabilidad |
+|--------|-----------|-----------------|
+| `modulo_datos` | Python, pandas | Extrae y normaliza datos de 5 agencias reguladoras oficiales |
+| `modulo_api` | FastAPI, psycopg2 | Expone la búsqueda y el algoritmo de equivalencias vía REST |
+| `modulo_app` | Kotlin, MVVM, Room | App Android con búsqueda, detalle, equivalencias y modo offline |
+
+### Estructura del repositorio
 
 ```
-Entrega_TFG_MarceloAntonioVelizOssandon/
-├── src/                                                # Código fuentes completo
-├── Distribuibles/
-│   └── AequoraMed.apk                                  # APK instalable de la app
-├── Documentacion_TFG_MarceloAntonioVelizOssandon.pdf   # Memoria del TFG en formato PDF
-└── README.md                                           # Archivo de información
-```
+modulo_datos/
+├── database/
+│   └── db_med.sql                     # DDL completo: esquemas, extensiones, tablas e índices
+├── scripts/
+│   ├── database.py                    # Conexión compartida por todos los scripts
+│   ├── fuentes_externas/              # Extracción por país (esquema fuentes)
+│   │   ├── data/
+│   │   │   ├── lista_infomed.csv      # Dataset ISP Chile
+│   │   │   └── Productos_RECETA_SIMPLE.csv  # Dataset INFARMED Portugal
+│   │   ├── spain_med.py              # AEMPS
+│   │   ├── chile_med.py              # ISP Chile
+│   │   ├── portugal_med.py           # INFARMED
+│   │   ├── canada_med.py             # Health Canada API
+│   │   ├── usa_fda.py                # openFDA API
+│   │   └── usa_rxnorm.py             # NIH RxNorm API
+│   └── etl/                          # Transformación y carga al esquema med
+│       ├── load_diccionarios.py
+│       ├── load_medicamentos.py
+│       └── load_relaciones.py
+└── requirements.txt
 
-Contenido de `src/`:
+modulo_api/
+├── app/
+│   ├── database.py                   # Conexión psycopg2 con RealDictCursor
+│   ├── models/                       # Modelos Pydantic (respuestas JSON)
+│   └── routers/
+│       ├── medicamentos.py           # GET /medicamentos/buscar, /medicamentos/{id}
+│       └── equivalencias.py          # GET /equivalencias/{id} (algoritmo ATC/PA)
+├── tests/
+│   ├── conftest.py
+│   └── test_api.py                   # 20 tests de búsqueda, detalle y equivalencias
+├── main.py
+└── requirements.txt
 
-```
-src/
-├── modulo_datos/                                        # ETL (Python): extrae y normaliza los datos
-│   ├── database/
-│   │   └── db_med.sql                                   # DDL completo: esquemas, extensiones, tablas e índices
-│   ├── scripts/
-│   │   ├── database.py                                  # Conexión a la BD compartida por todos los scripts
-│   │   ├── fuentes_externas/                            # Extracción por país (rellena el esquema `fuentes`)
-│   │   │   ├── data/
-│   │   │   │   ├── lista_infomed.csv                    # Dataset ISP Chile
-│   │   │   │   └── Productos_RECETA_SIMPLE.csv          # Dataset INFARMED Portugal
-│   │   │   ├── spain_med.py                             # AEMPS — Agencia Española de Medicamentos
-│   │   │   ├── chile_med.py                             # ISP Chile (CSV local)
-│   │   │   ├── portugal_med.py                          # INFARMED Portugal (CSV local)
-│   │   │   ├── canada_med.py                            # Health Canada API
-│   │   │   ├── usa_fda.py                               # openFDA API
-│   │   │   └── usa_rxnorm.py                            # NIH RxNorm API
-│   │   ├── etl/                                         # Transformación y carga al esquema `med`
-│   │   │   ├── load_diccionarios.py                     # Carga países, formas, vías, principios activos y ATCs
-│   │   │   ├── load_medicamentos.py                     # Carga los medicamentos normalizados de cada país
-│   │   │   └── load_relaciones.py                       # Carga relaciones medicamento-ATC y medicamento-principio_activo
-│   │   └── test_preliminar/
-│   │       └── test_equivalencias.py                    # Validación preliminar del algoritmo de equivalencias
-│   ├── requirements.txt
-│   └── .env                                             # Credenciales BD (no incluido)
-├── modulo_api/                                          # API REST (FastAPI)
-│   ├── app/
-│   │   ├── database.py                                  # Conexión psycopg2 con RealDictCursor
-│   │   ├── models/                                      # Modelos Pydantic (respuestas JSON)
-│   │   │   ├── atc.py
-│   │   │   ├── equivalencia.py
-│   │   │   ├── forma_farmaceutica.py
-│   │   │   ├── medicamento.py
-│   │   │   ├── pais.py
-│   │   │   ├── principio_activo.py
-│   │   │   └── via_administracion.py
-│   │   └── routers/
-│   │       ├── medicamentos.py                          # GET /medicamentos/buscar, /medicamentos/id_med
-│   │       └── equivalencias.py                         # GET /equivalencias/id_med (algoritmo ATC/PA)
-│   ├── tests/
-│   │   ├── conftest.py                                  # Fixture de TestClient con scope de sesión
-│   │   └── test_api.py                                  # 20 tests de búsqueda, detalle, equivalencias
-│   ├── main.py                                          # Punto de entrada Uvicorn + routers auxiliares
-│   ├── requirements.txt
-│   └── .env                                             # Credenciales BD (no incluido)
-└── modulo_app/                                          # App Android (Kotlin, MVVM)
-    ├── app/
-    │   ├── build.gradle
-    │   ├── proguard-rules.pro
-    │   └── src/
-    │       ├── androidTest/java/.../
-    │       │   └── MedDaoTest.kt                        # 5 tests instrumentados (Room)
-    │       ├── test/java/.../
-    │       │   └── MedMapperTest.kt                     # 4 tests unitarios (MedMapper)
-    │       └── main/java/esei/uvigo/es/tfg_donakyoin/
-    │           ├── App.kt                               # Clase Application que aplica tema oscuro/claro al arrancar
-    │           ├── MainActivity.kt                      # NavHostFragment + BottomNavigationView
-    │           ├── adapters/
-    │           │   ├── EquivalenciaAdapter.kt
-    │           │   └── MedAdapter.kt
-    │           ├── database/                            # Room (consulta offline)
-    │           │   ├── MedDao.kt
-    │           │   └── MedDb.kt                         # Singleton Room que define la BD y expone MedDao
-    │           ├── entities/
-    │           │   └── MedEntity.kt                     
-    │           ├── fragments/                           # Fragment con la Vistas para Búsqueda, Detalle, Filtro, Equivalencias, Guardados y Ajustes
-    │           │   ├── DetailFragment.kt                # Detalle de Medicamentos
-    │           │   ├── EquivalenciasBottomSheet.kt      # Equivalencias Farmacéuticas
-    │           │   ├── FilterBottomSheet.kt             # Filtrado de Búsqueda
-    │           │   ├── LocalDetailFragment.kt           # Detalle de Medicamentos Guardados
-    │           │   ├── SavedFragment.kt                 # Lista de Medicamentos Guardados
-    │           │   ├── SearchFragment.kt                # Buscador de Medicamentos
-    │           │   └── SettingsFragment.kt              # Ajustes de la Aplicación
-    │           ├── models/                              # DTOs Moshi / Retrofit
-    │           │   ├── AtcDto.kt
-    │           │   ├── EquivalenciaDto.kt
-    │           │   ├── FormaFarmaceuticaDto.kt
-    │           │   ├── MedicamentoDto.kt
-    │           │   ├── PaisDto.kt
-    │           │   ├── PrincipioActivoDto.kt
-    │           │   └── ViaAdministracionDto.kt
-    │           ├── network/
-    │           │   ├── ApiService.kt                    # Interfaz Retrofit de la API
-    │           │   └── RetrofitClient.kt                # BASE_URL y configuración Moshi
-    │           ├── repository/
-    │           │   └── MedRepository.kt                 # Fuente única de verdad (API + Room)
-    │           ├── utils/
-    │           │   ├── CountryUtils.kt                  # Mapeo de ISO code a nombre e icono de bandera
-    │           │   ├── MedMapper.kt                     # Mapeo de los datos de DTO a MedEntity (Room) y viceversa
-    │           │   ├── PrefsManager.kt                  # SharedPreferences (idioma, tema)
-    │           │   └── RecentSearchManager.kt
-    │           └── viewmodel/
-    │               └── MedViewModel.kt                  # ViewModel compartido por todos los fragments
-    ├── gradle/
-    │   ├── libs.versions.toml                           # Catálogo de versiones de dependencias
-    │   └── wrapper/
-    │       └── gradle-wrapper.properties
-    ├── build.gradle
-    ├── settings.gradle
-    └── gradle.properties
+modulo_app/app/src/main/java/esei/uvigo/es/tfg_donakyoin/
+├── fragments/                        # Búsqueda, Detalle, Equivalencias, Guardados, Ajustes
+├── viewmodel/MedViewModel.kt         # ViewModel compartido por todos los fragments
+├── repository/MedRepository.kt       # Fuente única de verdad (API + Room)
+├── database/                         # Room: MedDao + MedDb
+├── network/                          # Retrofit + Moshi
+├── models/                           # DTOs de la API
+└── utils/                            # CountryUtils, MedMapper, PrefsManager
 ```
 
 ---
@@ -131,8 +97,8 @@ src/
 
 | Ámbito | Tecnología |
 |--------|-----------|
-| Base de datos | PostgreSQL 18 + extensiones `unaccent`, `pg_trgm` |
-| Backend | Python 3.14, FastAPI 0.136, Uvicorn, Pydantic 2, psycopg2 |
+| Base de Datos | PostgreSQL 18 + extensiones `unaccent`, `pg_trgm` |
+| API | Python 3.14, FastAPI 0.136, Uvicorn, Pydantic 2, psycopg2 |
 | ETL | Python 3.14, `requests`, `pandas`, `numpy` |
 | Aplicación | Kotlin, Android SDK 35, Retrofit 2, Moshi, Room, Material 3 |
 | Despliegue | Render (PostgreSQL gestionado + Web Service con la API) |
@@ -152,13 +118,13 @@ DB_PORT=5432
 DB_SSLMODE=prefer
 ```
 
-Para conectar a la base de datos de **Render**, sustituye `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS` y `DB_NAME` con los valores que Render muestra en el panel de la base de datos, y cambia `DB_SSLMODE=require`.
+Para conectar a la base de datos de **Render**, sustituye `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS` y `DB_NAME` con los valores del panel de Render, y cambia `DB_SSLMODE=require`.
 
 ---
 
 ## Despliegue en local
 
-### Prerrequisitos
+### Requisitos
 
 - PostgreSQL 18 o superior instalado y en ejecución.
 - Python 3.14 o superior.
@@ -175,12 +141,7 @@ Asegúrate de que el servidor PostgreSQL está en ejecución antes de continuar.
 sudo systemctl start postgresql
 ```
 
-**macOS**
-```bash
-brew services start postgresql  # Homebrew
-```
-
-**Windows:** se recomienda usar **WSL** (Windows Subsystem for Linux) y seguir las instrucciones de Linux. La instalación nativa de PostgreSQL en Windows requiere arrancar manualmente el servicio `postgresql-x64-XX` desde `services.msc` o pgAdmin, y los comandos de terminal del resto de esta sección asumen un entorno Unix.
+>**Windows:** se recomienda usar **WSL** y seguir las instrucciones de Linux. La instalación nativa requiere arrancar el servicio `postgresql-x64-XX` desde `services.msc` o pgAdmin.
 
 Con el servidor activo, crea la base de datos y aplica el DDL:
 
@@ -189,24 +150,13 @@ sudo -u postgres createdb <nombre_db>
 sudo -u postgres psql -d <nombre_db> -f modulo_datos/database/db_med.sql
 ```
 
-> En instalaciones donde tu usuario del sistema ya tiene un rol PostgreSQL con permisos de superusuario, puedes omitir `sudo -u postgres`.
+> En instalaciones donde tu usuario ya tiene un rol PostgreSQL con permisos de superusuario, puedes omitir `sudo -u postgres`.
 
-El script `db_med.sql` crea los dos esquemas (`fuentes` y `med`), activa las extensiones `unaccent` y `pg_trgm`, define la función `f_unaccent` y crea todas las tablas e índices.
-
-Para verificar que todo se creó correctamente (tablas de ambos esquemas, índices, extensiones y función `f_unaccent`):
-
-```bash
-sudo -u postgres psql -d <nombre_db> \
-  -c "\dt med.*" \
-  -c "\dt fuentes.*" \
-  -c "\di med.*" \
-  -c "\dx" \
-  -c "\df f_unaccent"
-```
+El script crea los dos esquemas (`fuentes` y `med`), activa las extensiones `unaccent` y `pg_trgm`, define `f_unaccent` y crea todas las tablas e índices.
 
 ### 2. Cargar los datos
 
-Instala las dependencias y ejecuta los scripts desde la raíz de `modulo_datos/`, con el `.env` configurado. El proceso funciona igual apuntando a una base de datos local o a la de Render.
+Desde `modulo_datos/`, con el `.env` configurado:
 
 ```bash
 cd modulo_datos
@@ -231,10 +181,9 @@ python -m scripts.etl.load_medicamentos
 python -m scripts.etl.load_relaciones
 ```
 
-
 ### 3. Levantar la API
 
-Desde la raíz de `modulo_api/`, con el `.env` configurado:
+Desde `modulo_api/`, con el `.env` configurado:
 
 ```bash
 cd modulo_api
@@ -248,68 +197,43 @@ La documentación interactiva (Swagger UI) en `http://localhost:8000/docs`.
 
 ### 4. App Android
 
-1. Abre la carpeta `modulo_app/` en **Android Studio**.
+1. Abre `modulo_app/` en **Android Studio**.
 2. Localiza `app/src/main/java/esei/uvigo/es/tfg_donakyoin/network/RetrofitClient.kt` y ajusta `BASE_URL` según el entorno:
-   - Emulador Android - `http://10.0.2.2:8000/`
-   - Dispositivo físico en la misma red - `http://<IP-local-del-equipo>:8000/`
-   - API desplegada en Render - la URL pública del Web Service.
+   - Emulador Android → `http://10.0.2.2:8000/`
+   - Dispositivo físico en la misma red → `http://<IP-local-del-equipo>:8000/`
+   - API desplegada en Render → la URL pública del Web Service
 3. Compila y ejecuta en un emulador o dispositivo con **Android 8.0 (API 26) o superior**.
 
-> **Error de jlink:** si Gradle falla con un error relacionado con `jlink` o la JVM al compilar, detén el daemon desde la terminal de Android Studio y vuelve a ejecutar:
+> **Error de jlink:** si Gradle falla con un error relacionado con `jlink` o la JVM, detén el daemon y vuelve a ejecutar:
 > ```bash
 > ./gradlew --stop
 > ```
-> Esto es muy común si tienes extensiones de Java en Visual Studio Code.
+> Es frecuente si tienes extensiones de Java en Visual Studio Code.
 
-### 5. Instalación directa
-Si solo deseas probar la aplicación en un dispositivo Android o emulador sin necesidad de compilar el código fuente:
-
-1. Copia el archivo `Distribuibles/AequoraMed.apk` en tu dispositivo o arrástralo al emulador.
-2. Ejecútalo e instálalo (asegúrate de permitir la instalación desde orígenes desconocidos si el sistema lo solicita).
-
-> **Nota:** Esta versión del APK está preconfigurada para comunicarse directamente con la API desplegada en Render. Funcionará al instante siempre que el dispositivo tenga acceso a Internet y que el **servicio esté encendido** en Render, sin necesidad de configurar bases de datos ni levantar servidores locales.
 ---
 
 ## Despliegue en Render
 
-El backend de producción se compone de dos servicios en Render: una **base de datos PostgreSQL gestionada** y un **Web Service** que ejecuta la API con Uvicorn.
+El backend de producción se compone de dos servicios: una **base de datos PostgreSQL gestionada** y un **Web Service** con la API.
 
-### Paso 1: Crear la base de datos PostgreSQL en Render
+### Paso 1: Crear la base de datos PostgreSQL
 
 1. En el panel de Render, crea un nuevo servicio **PostgreSQL**.
-2. Asígnale un nombre a la base de datos y selecciona la región más cercana.
-3. Una vez creado, Render muestra en el panel del servicio dos cadenas de conexión:
-   - **Internal Database URL** — para el Web Service (comunicación interna dentro de Render, más rápida y sin coste de red).
-   - **External Database URL** — para conectarte desde fuera de Render (tu equipo local, el ETL).
-4. Anota la **External Database URL**; tiene este formato:
-   ```
-   postgresql://USER:PASSWORD@HOST:PORT/DATABASE
-   ```
+2. Una vez creado, anota la **External Database URL** (formato `postgresql://USER:PASSWORD@HOST:PORT/DATABASE`).
 
 ### Paso 2: Aplicar el DDL e inicializar los datos
 
-**Opción 1:** Desde tu equipo local, aplica el DDL y carga los datos apuntando a la base de datos de Render. Usa la **External Database URL**:
+Desde tu equipo local, aplica el DDL apuntando a Render:
 
 ```bash
 psql "postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require" -f modulo_datos/database/db_med.sql
 ```
 
-> El panel de la base de datos en Render incluye la **External Database URL** completa lista para copiar.
-
-**Opción 2:** Carga los datos ejecutando el ETL con el `.env` de `modulo_datos` apuntando a Render:
-
-```env
-DB_NAME=DATABASE
-DB_USER=USER
-DB_PASS=PASSWORD
-DB_HOST=HOST
-DB_PORT=PORT
-DB_SSLMODE=require
-```
+Luego ejecuta el ETL con el `.env` de `modulo_datos` configurado con los valores de Render (`DB_SSLMODE=require`).
 
 ### Paso 3: Crear el Web Service (API)
 
-1. En Render, crea un nuevo **Web Service** y conéctalo al repositorio (o carga el código manualmente).
+1. En Render, crea un nuevo **Web Service** y conéctalo al repositorio.
 2. Configura el servicio:
 
    | Campo | Valor |
@@ -319,30 +243,15 @@ DB_SSLMODE=require
    | **Build command** | `pip install -r requirements.txt` |
    | **Start command** | `uvicorn main:app --host 0.0.0.0 --port $PORT` |
 
-3. En **Environment Variables**, añade las mismas variables que el `.env`, pero con los valores de la base de datos de Render. Usa la **Internal Database URL** para conectar el Web Service a la BD (más eficiente que la externa):
+3. En **Environment Variables**, añade las variables del `.env` con los valores de la BD de Render, usando la **Internal Database URL** para `DB_HOST`.
 
-   | Variable | Valor |
-   |----------|-------|
-   | `DB_NAME` | nombre de la BD en Render |
-   | `DB_USER` | usuario de la BD en Render |
-   | `DB_PASS` | contraseña de la BD en Render |
-   | `DB_HOST` | host **interno** de la BD en Render |
-   | `DB_PORT` | puerto interno (normalmente `5432`) |
-   | `DB_SSLMODE` | `require` |
+4. Una vez activo, verifica que la API responde en `https://<tu-url>.onrender.com/docs`.
 
-4. Despliega. Una vez activo, Render asigna una URL pública. Verifica que la API responde en `https://<tu-url>.onrender.com/docs`.
+### Paso 4: Conectar la app Android
 
-### Paso 4: Conectar la app Android a Render
+En `RetrofitClient.kt`, actualiza `BASE_URL` con la URL pública del Web Service y recompila.
 
-En `RetrofitClient.kt`, cambia `BASE_URL` a la URL pública del Web Service:
-
-```kotlin
-private const val BASE_URL = "https://<tu-url>.onrender.com/"
-```
-
-Recompila e instala la app.
-
-> **Nota sobre el tier gratuito de Render:** los Web Services en el plan Free se suspenden tras 15 minutos de inactividad. La primera petición tras una suspensión puede tardar 30-60 segundos en responder (cold start). Su uso continuado solo está disponible en planes de pago.
+> **Tier gratuito de Render:** los Web Services en el plan Free se suspenden tras 15 minutos de inactividad. La primera petición tras una suspensión puede tardar 30-60 segundos (cold start).
 
 ---
 
@@ -350,17 +259,15 @@ Recompila e instala la app.
 
 ### API (pytest)
 
-La suite de pruebas requiere que la API esté conectada a una base de datos con datos cargados. Desde `modulo_api/` con el entorno activado y el `.env` configurado:
+Requiere la API conectada a una base de datos con datos cargados. Desde `modulo_api/` con el entorno activado:
 
 ```bash
 pytest -v
 ```
 
-Los 20 tests cubren los tres endpoints principales: Búsqueda con sus cinco modos y cuatro filtros, detalle de medicamento, y equivalencias (por ATC, por principio activo, por inferencia para Chile y Portugal, filtro por país destino y búsqueda cross-idioma).
+Los 20 tests cubren los tres endpoints: búsqueda (cinco modos y cuatro filtros), detalle de medicamento y equivalencias (por ATC, por principio activo, inferencia para Chile y Portugal, filtro por país destino y búsqueda cross-idioma).
 
 ### App Android
-
-Los tests de Android se ejecutan desde Android Studio o con Gradle:
 
 ```bash
 # Tests unitarios (no requieren dispositivo)
@@ -372,6 +279,6 @@ cd modulo_app
 ```
 ---
 
-## Documentación
+## Licencia
 
-La memoria completa del TFG se encuentra en `Documentacion_TFG_MarceloAntonioVelizOssandon.pdf`, en la raíz del directorio de entrega.
+Distribuido bajo la licencia especificada en el archivo [LICENSE](LICENSE).
