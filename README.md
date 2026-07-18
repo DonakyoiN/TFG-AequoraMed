@@ -35,7 +35,7 @@ Búsqueda de medicamentos por nombre en cinco países, ficha completa con códig
 El proyecto se divide en tres módulos independientes que colaboran entre sí:
 
 <p align="center">
-  <img src="assets/screenshots/TFG_ArquitecturaSistema.png" alt="Arquitectura del sistema">
+  <img src="assets/TFG_ArquitecturaSistema.png" alt="Arquitectura del sistema">
 </p>
 
 | Módulo | Tecnología | Responsabilidad |
