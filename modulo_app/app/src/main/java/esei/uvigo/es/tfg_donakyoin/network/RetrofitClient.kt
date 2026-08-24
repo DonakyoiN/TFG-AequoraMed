@@ -7,7 +7,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 object RetrofitClient {
 
    // Localhost mientras la API no esté desplegada
-    private const val BASE_URL = "https://projectmed-n2gx.onrender.com/"
+    private const val BASE_URL = "https://tfg-aequoramed.onrender.com/"
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
